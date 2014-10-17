@@ -38,4 +38,12 @@ public class ConcreteVertex implements Vertex {
 		return player;
 	}
 
+	public void setNumberOfDices(int numberOfDices) {
+		this.numberOfDices = numberOfDices;
+	}
+	
+	public void setPlayer(int player) {
+		this.player = player;
+	}
+
 }

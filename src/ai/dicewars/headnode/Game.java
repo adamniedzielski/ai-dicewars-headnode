@@ -1,13 +1,17 @@
 package ai.dicewars.headnode;
 
 import java.util.List;
+import java.util.Random;
 
 import ai.dicewars.common.Agent;
 import ai.dicewars.common.Answer;
 import ai.dicewars.common.Vertex;
+import ai.dicewars.headnode.exception.MapException;
+import ai.dicewars.headnode.exception.MoveException;
 
 public class Game {
 	private List<Vertex> vertices;
+	private Random rand = new Random();
 
 	public void play() {
 		vertices = new MapBuilder().build();
@@ -25,15 +29,42 @@ public class Game {
 				currentAgent = (currentAgent + 1) % 2;
 			}
 			else {
-				applyMove(answer);
+				try{
+					applyMove(answer);
+				} catch(MoveException e){
+					e.printStackTrace();
+				}
 			}
 		}
 	}
 	
-	private void applyMove(Answer answer) {
+	private void applyMove(Answer answer) throws MoveException {
+		if (answer.isEmptyMove())
+			return;
+
+		try {
+			ConcreteVertex from = (ConcreteVertex)getVertex(answer.getFrom());
+			ConcreteVertex to = (ConcreteVertex)getVertex(answer.getTo());
+			
+			checkMoveLogic(from, to);
+			
+			int currentAgentScore = getRandomSum(from.getNumberOfDices());
+			int oponentAgentScore = getRandomSum(to.getNumberOfDices());
+			
+			if(currentAgentScore > oponentAgentScore){
+				to.setNumberOfDices(from.getNumberOfDices() - 1);
+				from.setNumberOfDices(1); 
+				to.setPlayer(from.getPlayer());
+			} else{
+				from.setNumberOfDices(1); 
+			}
+				
+		} catch (Exception e) {
+			throw new MoveException(e);
+		}
 		/*
-		 * TODO: this method should check if the move is valid
-		 * then it should roll the dices, determine the winner and modify the game state
+		 * TODO: this method should check if the move is valid then it should
+		 * roll the dices, determine the winner and modify the game state
 		 */
 	}
 
@@ -50,5 +81,41 @@ public class Game {
 		if (countPlayerOne ==0 || countPlayerOne==14)
 			return true;
 		else return false;
+	}
+	
+	private int getDiceRandom(){	
+	    int randomNum = rand.nextInt((6 - 1) + 1) + 1;
+	    return randomNum;
+	}
+	
+	private int getRandomSum(int dices){
+		int sum = 0;
+		for(int i = 0; i<dices; i++)
+			sum += getDiceRandom();
+		return sum;
+	}
+	
+	private void checkMoveLogic(Vertex from, Vertex to) throws MoveException{
+		if(from.getNumberOfDices() == 1)
+			throw new MoveException("Can not shift dice from field with one dice");
+		
+		try {
+			checkMoveToplogy(from, to);
+		} catch (MapException e) {
+			throw new MoveException(e);
+		}
+	}
+	
+	private void checkMoveToplogy(Vertex from, Vertex to) throws MapException{
+		//TODO no needed to check both ways
+		if(!(from.getNeighbours().contains(to.getId()) && to.getNeighbours().contains(from.getId())))
+			throw new MapException("Vertices " + from.getId() + " and " + to.getId() + " are not connected");
+	}
+	
+	public Vertex getVertex(int vertexId){
+		for(Vertex v : vertices)
+			if(v.getId() == vertexId)
+				return v;
+		return null;
 	}
 }
