@@ -7,9 +7,10 @@ import ai.dicewars.common.Answer;
 import ai.dicewars.common.Vertex;
 
 public class Game {
+	private List<Vertex> vertices;
 
 	public void play() {
-		List<Vertex> vertices = new MapBuilder().build();
+		vertices = new MapBuilder().build();
 		Agent agents[] = new Agent[2];
 		agents[0] = new InteractiveAgent();
 		agents[0].setPlayerNumber(0);
@@ -40,7 +41,14 @@ public class Game {
 		/*
 		 * TODO: this should have real implementation
 		 */
-
-		return false;
+		int countPlayerOne = 0;
+		for (int i=0; i< vertices.size(); i++){
+			if(vertices.get(i).getPlayer() == 0)
+				countPlayerOne ++;
+		}
+		
+		if (countPlayerOne ==0 || countPlayerOne==14)
+			return true;
+		else return false;
 	}
 }
