@@ -16,6 +16,7 @@ public class MapBuilder {
 
 	public List<ConcreteVertex> build() {
 		List<ConcreteVertex> vertices = new ArrayList<>();
+
 		/*
 		 * Vertex first = new ConcreteVertex(1, Arrays.asList(2), 4, 0); Vertex
 		 * second = new ConcreteVertex(2, Arrays.asList(1), 6, 1);

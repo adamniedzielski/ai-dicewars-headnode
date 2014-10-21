@@ -20,7 +20,7 @@ public class InteractiveAgent implements Agent {
 	private ConcreteAnswer answer;
 
 	@Override
-	public Answer makeMove(List<Vertex> vertices) {
+	public Answer makeMove(List<? extends Vertex> vertices) {
 		printmap(vertices);
 		System.out.println("Player " + playerNumber + " make move!");
 		Scanner in = new Scanner(System.in);
@@ -35,7 +35,7 @@ public class InteractiveAgent implements Agent {
 		this.playerNumber = playerNumber;
 	}
 	
-	public void printmap(List<Vertex> vertices)
+	public void printmap(List<? extends Vertex> vertices)
 	{
 	for(int i=0; i<vertices.size(); i++)
 System.out.println(""+vertices.get(i).getId()+", "+ vertices.get(i).getNeighbours()+", "+vertices.get(i).getNumberOfDices()+" , "+vertices.get(i).getPlayer()+" "); 

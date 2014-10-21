@@ -43,8 +43,8 @@ public class Game {
 			return;
 
 		try {
-			ConcreteVertex from = (ConcreteVertex)getVertex(answer.getFrom());
-			ConcreteVertex to = (ConcreteVertex)getVertex(answer.getTo());
+			ConcreteVertex from = getVertex(answer.getFrom());
+			ConcreteVertex to = getVertex(answer.getTo());
 			
 			checkMoveLogic(from, to);
 			
@@ -95,7 +95,7 @@ public class Game {
 		return sum;
 	}
 	
-	private void checkMoveLogic(Vertex from, Vertex to) throws MoveException{
+	private void checkMoveLogic(ConcreteVertex from, ConcreteVertex to) throws MoveException{
 		if(from.getNumberOfDices() == 1)
 			throw new MoveException("Can not shift dice from field with one dice");
 		
@@ -106,14 +106,14 @@ public class Game {
 		}
 	}
 	
-	private void checkMoveToplogy(Vertex from, Vertex to) throws MapException{
+	private void checkMoveToplogy(ConcreteVertex from, ConcreteVertex to) throws MapException{
 		//TODO no needed to check both ways
 		if(!(from.getNeighbours().contains(to.getId()) && to.getNeighbours().contains(from.getId())))
 			throw new MapException("Vertices " + from.getId() + " and " + to.getId() + " are not connected");
 	}
 	
-	public Vertex getVertex(int vertexId){
-		for(Vertex v : vertices)
+	public ConcreteVertex getVertex(int vertexId){
+		for(ConcreteVertex v : vertices)
 			if(v.getId() == vertexId)
 				return v;
 		return null;
