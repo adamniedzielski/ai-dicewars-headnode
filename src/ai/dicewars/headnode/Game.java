@@ -10,7 +10,7 @@ import ai.dicewars.headnode.exception.MapException;
 import ai.dicewars.headnode.exception.MoveException;
 
 public class Game {
-	private List<Vertex> vertices;
+	private List<ConcreteVertex> vertices;
 	private Random rand = new Random();
 
 	public void play() {
