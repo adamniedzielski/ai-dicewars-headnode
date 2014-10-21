@@ -13,10 +13,10 @@ import ai.dicewars.common.Vertex;
 
 public class MapBuilder {
 
-	public List<Vertex> build() {
-		List<Vertex> vertices = new ArrayList<>();
-		Vertex first = new ConcreteVertex(1, Arrays.asList(2), 4, 0);
-		Vertex second = new ConcreteVertex(2, Arrays.asList(1), 6, 1);
+	public List<ConcreteVertex> build() {
+		List<ConcreteVertex> vertices = new ArrayList<>();
+		ConcreteVertex first = new ConcreteVertex(1, Arrays.asList(2), 4, 0);
+		ConcreteVertex second = new ConcreteVertex(2, Arrays.asList(1), 6, 1);
 		vertices.add(first);
 		vertices.add(second);
 		
