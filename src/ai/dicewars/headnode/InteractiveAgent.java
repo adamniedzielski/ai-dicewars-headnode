@@ -16,8 +16,8 @@ import ai.dicewars.common.Vertex;
 public class InteractiveAgent implements Agent {
 	
 	private int playerNumber;
-
-
+	private List<Vertex> vertices;
+	private ConcreteAnswer answer;
 
 	@Override
 	public Answer makeMove(List<? extends Vertex> vertices) {
@@ -25,10 +25,7 @@ public class InteractiveAgent implements Agent {
 		System.out.println("Player " + playerNumber + " make move!");
 		Scanner in = new Scanner(System.in);
 		int notUsed = in.nextInt();
-
-		return new ConcreteAnswer(false, makeMove(vertices).getFrom(),makeMove(vertices).getTo());
-		
-		
+		return new ConcreteAnswer(true, 0, 0);
 		
 		
 	}
