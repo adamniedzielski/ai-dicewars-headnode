@@ -52,7 +52,7 @@ public class Game {
 			}
 		}
 		
-		int numberOfExtraDices = verticesOfCurrentAgent.size();
+		int numberOfExtraDices = new MaximumConnectedComponent(verticesOfCurrentAgent).calculate();
 		
 		for(int i = 0; i < numberOfExtraDices; i++) {
 			ConcreteVertex selectedVertex = verticesOfCurrentAgent.get(rand.nextInt(verticesOfCurrentAgent.size()));
