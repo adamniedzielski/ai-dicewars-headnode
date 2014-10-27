@@ -1,5 +1,6 @@
 package ai.dicewars.headnode;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -29,7 +30,7 @@ public class Game {
 		while(!isGameFinished()) {
 			Answer answer = agents[currentAgent].makeMove(vertices);
 			if (answer.isEmptyMove()) {
-				addRandomDices(currentAgent);
+				addRandomDices();
 				currentAgent = (currentAgent + 1) % 2;
 			}
 			else {
@@ -43,9 +44,20 @@ public class Game {
 		}
 	}
 	
-	private void addRandomDices(int currentAgent) {
-		// TODO Auto-generated method stub
+	private void addRandomDices() {
+		List<ConcreteVertex> verticesOfCurrentAgent = new ArrayList<>();
+		for (ConcreteVertex vertex : vertices) {
+			if (vertex.getPlayer() == currentAgent) {
+				verticesOfCurrentAgent.add(vertex);
+			}
+		}
 		
+		int numberOfExtraDices = verticesOfCurrentAgent.size();
+		
+		for(int i = 0; i < numberOfExtraDices; i++) {
+			ConcreteVertex selectedVertex = verticesOfCurrentAgent.get(rand.nextInt(verticesOfCurrentAgent.size()));
+			selectedVertex.setNumberOfDices(selectedVertex.getNumberOfDices() + 1);
+		}		
 	}
 
 	private void applyMove(Answer answer) throws MoveException {
