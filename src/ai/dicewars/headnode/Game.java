@@ -11,6 +11,7 @@ import ai.dicewars.headnode.exception.MoveException;
 public class Game {
 	private List<ConcreteVertex> vertices;
 	private Random rand = new Random();
+	private int currentAgent;
 
 	public void play() {
 		/*
@@ -23,7 +24,7 @@ public class Game {
 		agents[1] = new InteractiveAgent();
 		agents[1].setPlayerNumber(1);
 		
-		int currentAgent = 0;
+		currentAgent = 0;
 		
 		while(!isGameFinished()) {
 			Answer answer = agents[currentAgent].makeMove(vertices);
@@ -36,6 +37,7 @@ public class Game {
 					applyMove(answer);
 				} catch(MoveException e){
 					e.printStackTrace();
+					return;
 				}
 			}
 		}
@@ -99,6 +101,14 @@ public class Game {
 	private void checkMoveLogic(ConcreteVertex from, ConcreteVertex to) throws MoveException{
 		if(from.getNumberOfDices() == 1)
 			throw new MoveException("Can not shift dice from field with one dice");
+		
+		if(from.getPlayer() != currentAgent) {
+			throw new MoveException("You wanted to attack from field of your opponent");
+		}
+		
+		if(to.getPlayer() == currentAgent) {
+			throw new MoveException("You wanted to attack your own field");
+		}
 		
 		try {
 			checkMoveToplogy(from, to);
