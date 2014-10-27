@@ -5,7 +5,6 @@ import java.util.Random;
 
 import ai.dicewars.common.Agent;
 import ai.dicewars.common.Answer;
-import ai.dicewars.common.Vertex;
 import ai.dicewars.headnode.exception.MapException;
 import ai.dicewars.headnode.exception.MoveException;
 
@@ -29,6 +28,7 @@ public class Game {
 		while(!isGameFinished()) {
 			Answer answer = agents[currentAgent].makeMove(vertices);
 			if (answer.isEmptyMove()) {
+				addRandomDices(currentAgent);
 				currentAgent = (currentAgent + 1) % 2;
 			}
 			else {
@@ -41,6 +41,11 @@ public class Game {
 		}
 	}
 	
+	private void addRandomDices(int currentAgent) {
+		// TODO Auto-generated method stub
+		
+	}
+
 	private void applyMove(Answer answer) throws MoveException {
 		if (answer.isEmptyMove())
 			return;
@@ -65,16 +70,9 @@ public class Game {
 		} catch (Exception e) {
 			throw new MoveException(e);
 		}
-		/*
-		 * TODO: this method should check if the move is valid then it should
-		 * roll the dices, determine the winner and modify the game state
-		 */
 	}
 
 	private boolean isGameFinished() {
-		/*
-		 * TODO: this should have real implementation
-		 */
 		int countPlayerOne = 0;
 		for (int i=0; i< vertices.size(); i++){
 			if(vertices.get(i).getPlayer() == 0)
@@ -109,8 +107,7 @@ public class Game {
 		}
 	}
 	
-	private void checkMoveToplogy(ConcreteVertex from, ConcreteVertex to) throws MapException{
-		//TODO no needed to check both ways
+	private void checkMoveToplogy(ConcreteVertex from, ConcreteVertex to) throws MapException {
 		if(!(from.getNeighbours().contains(to.getId()) && to.getNeighbours().contains(from.getId())))
 			throw new MapException("Vertices " + from.getId() + " and " + to.getId() + " are not connected");
 	}
