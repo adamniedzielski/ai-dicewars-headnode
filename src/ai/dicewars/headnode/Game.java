@@ -14,7 +14,10 @@ public class Game {
 	private Random rand = new Random();
 
 	public void play() {
-		vertices = new MapBuilder().build();
+		/*
+		 * TODO: change this to MapBuilder when it starts working again
+		 */
+		vertices = new FakeMapBuilder().build();
 		Agent agents[] = new Agent[2];
 		agents[0] = new InteractiveAgent();
 		agents[0].setPlayerNumber(0);
