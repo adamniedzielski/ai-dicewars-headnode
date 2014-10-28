@@ -10,6 +10,7 @@ import ai.dicewars.headnode.exception.MapException;
 import ai.dicewars.headnode.exception.MoveException;
 
 public class Game {
+	private static final int MAP_SIZE = 6;
 	private List<ConcreteVertex> vertices;
 	private Random rand = new Random();
 	private int currentAgent;
@@ -42,8 +43,20 @@ public class Game {
 				}
 			}
 		}
+		
+		displayWinner();
 	}
 	
+	private void displayWinner() {
+		if (getPlayerZeroCount() == MAP_SIZE) {
+			System.out.println("Player 0 won");
+		}
+		else {
+			System.out.println("Player 1 won");
+		}
+		
+	}
+
 	private void addRandomDices() {
 		List<ConcreteVertex> verticesOfCurrentAgent = new ArrayList<>();
 		for (ConcreteVertex vertex : vertices) {
@@ -87,15 +100,20 @@ public class Game {
 	}
 
 	private boolean isGameFinished() {
-		int countPlayerOne = 0;
-		for (int i=0; i< vertices.size(); i++){
-			if(vertices.get(i).getPlayer() == 0)
-				countPlayerOne ++;
-		}
+		int countPlayerZero = getPlayerZeroCount();
 		
-		if (countPlayerOne ==0 || countPlayerOne==14)
+		if (countPlayerZero == 0 || countPlayerZero == MAP_SIZE)
 			return true;
 		else return false;
+	}
+
+	private int getPlayerZeroCount() {
+		int countPlayerZero = 0;
+		for (int i=0; i< vertices.size(); i++){
+			if(vertices.get(i).getPlayer() == 0)
+				countPlayerZero ++;
+		}
+		return countPlayerZero;
 	}
 	
 	private int getDiceRandom(){	
