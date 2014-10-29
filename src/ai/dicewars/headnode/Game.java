@@ -19,7 +19,7 @@ public class Game {
 		/*
 		 * TODO: change this to MapBuilder when it starts working again
 		 */
-		vertices = new FakeMapBuilder().build();
+		vertices = new MapBuilder().build();
 		Agent agents[] = new Agent[2];
 		agents[0] = new InteractiveAgent();
 		agents[0].setPlayerNumber(0);

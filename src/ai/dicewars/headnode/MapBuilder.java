@@ -1,10 +1,7 @@
 package ai.dicewars.headnode;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-
-import ai.dicewars.common.Vertex;
 
 import java.util.Random;
 
@@ -18,87 +15,118 @@ public class MapBuilder {
 	public List<ConcreteVertex> build() {
 		List<ConcreteVertex> vertices = new ArrayList<>();
 
-		//initialize elements
+		vertices.add(new ConcreteVertex(0, null, 0, 0));
+
+		// initialize elements
 		for (int i = 0; i < 7; i++) {
-			vertices.add(new ConcreteVertex((i + 1), new ArrayList<Integer>(), 1, 0));
+			vertices.add(new ConcreteVertex((i + 1), new ArrayList<Integer>(),
+					1, 0));
 		}
 		for (int i = 7; i < 14; i++) {
-			vertices.add(new ConcreteVertex((i + 1), new ArrayList<Integer>(), 1, 1));
+			vertices.add(new ConcreteVertex((i + 1), new ArrayList<Integer>(),
+					1, 1));
 		}
-		
-		vertices.add(new ConcreteVertex(0, null, 0, 0));
-		
-		//set 1 dice for each field
-				for(int i=1; i<15; i++){
-					vertices.get(i).setNumberOfDices(1);
-				}
-				
-		
-	
+
+		// set 1 dice for each field
+		for (int i = 1; i < 15; i++) {
+			vertices.get(i).setNumberOfDices(1);
+		}
+
 		Random randomGenerator = new Random();
 
-		//randomly set nr of dices on a field (player one)
+		// randomly set nr of dices on a field (player one)
 		for (int i = 0; i < 14; i++) {
-			int randomInt = randomGenerator.nextInt(7)+1;
+			int randomInt = randomGenerator.nextInt(7) + 1;
 			if (vertices.get(randomInt).getNumberOfDices() < 8) {
-				vertices.get(randomInt).setNumberOfDices(vertices.get(randomInt).getNumberOfDices()+1);
-			} else {
-				i--;
-			}
-		}
-		
-		//randomly set nr of dices on a field (player two)
-		for (int i = 0; i < 14; i++) {
-			int randomInt = randomGenerator.nextInt(7)+7;
-			if (vertices.get(randomInt).getNumberOfDices() < 8) {
-				vertices.get(randomInt).setNumberOfDices(vertices.get(randomInt).getNumberOfDices()+1);
+				vertices.get(randomInt).setNumberOfDices(
+						vertices.get(randomInt).getNumberOfDices() + 1);
 			} else {
 				i--;
 			}
 		}
 
-		
-		//przechowuje indexy, które usuwaj¹ siê gdy liczba zostanie wylosowana
-		List<Integer> indexesToRemove = new ArrayList();
-		//zapamiêtuje kolejnoœæ w drzewie (do iterowania)
-		List<Integer> treeBuilder = new ArrayList<>();
-				
-		
-		for(int i=0; i<14; i++){
-			indexesToRemove.add(i+1);
-		}
-		
-		int randomParent = randomGenerator.nextInt(14)+1;
-		
-		treeBuilder.add(0, randomParent);
-		indexesToRemove = elementRemover(randomParent, indexesToRemove);
-		
-		for(int i = 0; i < treeBuilder.size(); i++){
-			randomParent = treeBuilder.get(i);
-			int quantityOfChildren = randomGenerator.nextInt(5)+1;
-			for(int j=0; j<quantityOfChildren; j++){
-				int randomChildren = randomGenerator.nextInt(indexesToRemove.size());
-				treeBuilder.add(indexesToRemove.get(randomChildren));
-				vertices.get(randomParent).addNeighbour(indexesToRemove.get(randomChildren));
-				indexesToRemove = elementRemover(randomChildren, indexesToRemove);
-				if(indexesToRemove.isEmpty()) break;
+		// randomly set nr of dices on a field (player two)
+		for (int i = 0; i < 14; i++) {
+			int randomInt = randomGenerator.nextInt(7) + 8;
+			if (vertices.get(randomInt).getNumberOfDices() < 8) {
+				vertices.get(randomInt).setNumberOfDices(
+						vertices.get(randomInt).getNumberOfDices() + 1);
+			} else {
+				i--;
 			}
-			
-			if(indexesToRemove.isEmpty()) break;
 		}
-			
-		
+
+		// przechowuje indexy, ktï¿½re usuwajï¿½ siï¿½ gdy liczba zostanie wylosowana
+		List<Integer> indexesToRemove = new ArrayList<>();
+		// zapamiï¿½tuje kolejnoï¿½ï¿½ w drzewie (do iterowania)
+		List<Integer> treeBuilder = new ArrayList<>();
+
+		for (int i = 0; i < 14; i++) {
+			indexesToRemove.add(i + 1);
+		}
+
+		int randomParent = randomGenerator.nextInt(14) + 1;
+
+		treeBuilder.add(0, randomParent);
+		indexesToRemove = elementRemover(randomParent - 1, indexesToRemove);
+
+		for (int i = 0; i < treeBuilder.size(); i++) {
+			randomParent = treeBuilder.get(i);
+			int quantityOfChildren = randomGenerator.nextInt(2) + 1;
+			for (int j = 0; j < quantityOfChildren; j++) {
+				int randomChildren = randomGenerator.nextInt(indexesToRemove
+						.size());
+				treeBuilder.add(indexesToRemove.get(randomChildren));
+				vertices.get(randomParent).addNeighbour(
+						indexesToRemove.get(randomChildren));
+				vertices.get(indexesToRemove.get(randomChildren)).addNeighbour(
+						randomParent);
+				indexesToRemove = elementRemover(randomChildren,
+						indexesToRemove);
+				if (indexesToRemove.isEmpty())
+					break;
+			}
+
+			if (indexesToRemove.isEmpty())
+				break;
+		}
+
+		//Creating additional random connections to create the map, not simple tree
+		int randomConnectionsQuantity = randomGenerator.nextInt(3) + 7;
+		//int randomConnectionsQuantity = 9;
+		for (int i = 0; i <= randomConnectionsQuantity; i++) {
+			int randomVertex1 = randomGenerator.nextInt(14) + 1;
+			int randomVertex2 = randomGenerator.nextInt(14) + 1;
+			if (randomVertex1 == randomVertex2) {
+				i--;
+				break;
+			} else {
+				Boolean isConnected = false;
+				for (int j = 0; j < vertices.get(randomVertex1).getNeighbours()
+						.size(); j++) {
+					if(vertices.get(randomVertex1).getNeighbours().get(j) == randomVertex2){
+						isConnected = true;
+						break;
+					}
+				}
+				if(!isConnected){
+					vertices.get(randomVertex1).addNeighbour(randomVertex2);
+					vertices.get(randomVertex2).addNeighbour(randomVertex1);
+				}
+			}
+		}
+		vertices.remove(0);
+
 		return vertices;
 	}
-	
-	
-	//removes element from IndexesToRemove and shifts the list
-	List<Integer> elementRemover(int id, List<Integer> IndexesToRemove){
-		for (int i=id; i<IndexesToRemove.size()-1; i++){
-			IndexesToRemove.set(id, IndexesToRemove.get(id+1));
+
+	// removes element from IndexesToRemove and shifts the list
+	public List<Integer> elementRemover(int id, List<Integer> IndexesToRemove) {
+		for (int i = id; i < IndexesToRemove.size() - 1; i++) {
+			IndexesToRemove.set(i, IndexesToRemove.get(i + 1));
 		}
-		IndexesToRemove.remove(IndexesToRemove.size()-1);
+		IndexesToRemove.remove(IndexesToRemove.size() - 1);
 		return IndexesToRemove;
 	}
-	 
+
 }
