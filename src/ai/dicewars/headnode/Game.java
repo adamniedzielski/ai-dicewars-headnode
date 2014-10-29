@@ -1,31 +1,37 @@
 package ai.dicewars.headnode;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
 import ai.dicewars.common.Agent;
 import ai.dicewars.common.Answer;
-import ai.dicewars.common.Vertex;
 import ai.dicewars.headnode.exception.MapException;
 import ai.dicewars.headnode.exception.MoveException;
 
 public class Game {
+	private static final int MAP_SIZE = 6;
 	private List<ConcreteVertex> vertices;
 	private Random rand = new Random();
+	private int currentAgent;
 
 	public void play() {
-		vertices = new MapBuilder().build();
+		/*
+		 * TODO: change this to MapBuilder when it starts working again
+		 */
+		vertices = new FakeMapBuilder().build();
 		Agent agents[] = new Agent[2];
 		agents[0] = new InteractiveAgent();
 		agents[0].setPlayerNumber(0);
 		agents[1] = new InteractiveAgent();
 		agents[1].setPlayerNumber(1);
 		
-		int currentAgent = 0;
+		currentAgent = 0;
 		
 		while(!isGameFinished()) {
 			Answer answer = agents[currentAgent].makeMove(vertices);
 			if (answer.isEmptyMove()) {
+				addRandomDices();
 				currentAgent = (currentAgent + 1) % 2;
 			}
 			else {
@@ -33,11 +39,40 @@ public class Game {
 					applyMove(answer);
 				} catch(MoveException e){
 					e.printStackTrace();
+					return;
 				}
 			}
 		}
+		
+		displayWinner();
 	}
 	
+	private void displayWinner() {
+		if (getPlayerZeroCount() == MAP_SIZE) {
+			System.out.println("Player 0 won");
+		}
+		else {
+			System.out.println("Player 1 won");
+		}
+		
+	}
+
+	private void addRandomDices() {
+		List<ConcreteVertex> verticesOfCurrentAgent = new ArrayList<>();
+		for (ConcreteVertex vertex : vertices) {
+			if (vertex.getPlayer() == currentAgent) {
+				verticesOfCurrentAgent.add(vertex);
+			}
+		}
+		
+		int numberOfExtraDices = new MaximumConnectedComponent(verticesOfCurrentAgent).calculate();
+		
+		for(int i = 0; i < numberOfExtraDices; i++) {
+			ConcreteVertex selectedVertex = verticesOfCurrentAgent.get(rand.nextInt(verticesOfCurrentAgent.size()));
+			selectedVertex.setNumberOfDices(selectedVertex.getNumberOfDices() + 1);
+		}		
+	}
+
 	private void applyMove(Answer answer) throws MoveException {
 		if (answer.isEmptyMove())
 			return;
@@ -62,25 +97,23 @@ public class Game {
 		} catch (Exception e) {
 			throw new MoveException(e);
 		}
-		/*
-		 * TODO: this method should check if the move is valid then it should
-		 * roll the dices, determine the winner and modify the game state
-		 */
 	}
 
 	private boolean isGameFinished() {
-		/*
-		 * TODO: this should have real implementation
-		 */
-		int countPlayerOne = 0;
-		for (int i=0; i< vertices.size(); i++){
-			if(vertices.get(i).getPlayer() == 0)
-				countPlayerOne ++;
-		}
+		int countPlayerZero = getPlayerZeroCount();
 		
-		if (countPlayerOne ==0 || countPlayerOne==14)
+		if (countPlayerZero == 0 || countPlayerZero == MAP_SIZE)
 			return true;
 		else return false;
+	}
+
+	private int getPlayerZeroCount() {
+		int countPlayerZero = 0;
+		for (int i=0; i< vertices.size(); i++){
+			if(vertices.get(i).getPlayer() == 0)
+				countPlayerZero ++;
+		}
+		return countPlayerZero;
 	}
 	
 	private int getDiceRandom(){	
@@ -99,6 +132,14 @@ public class Game {
 		if(from.getNumberOfDices() == 1)
 			throw new MoveException("Can not shift dice from field with one dice");
 		
+		if(from.getPlayer() != currentAgent) {
+			throw new MoveException("You wanted to attack from field of your opponent");
+		}
+		
+		if(to.getPlayer() == currentAgent) {
+			throw new MoveException("You wanted to attack your own field");
+		}
+		
 		try {
 			checkMoveToplogy(from, to);
 		} catch (MapException e) {
@@ -106,8 +147,7 @@ public class Game {
 		}
 	}
 	
-	private void checkMoveToplogy(ConcreteVertex from, ConcreteVertex to) throws MapException{
-		//TODO no needed to check both ways
+	private void checkMoveToplogy(ConcreteVertex from, ConcreteVertex to) throws MapException {
 		if(!(from.getNeighbours().contains(to.getId()) && to.getNeighbours().contains(from.getId())))
 			throw new MapException("Vertices " + from.getId() + " and " + to.getId() + " are not connected");
 	}

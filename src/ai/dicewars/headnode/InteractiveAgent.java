@@ -7,27 +7,26 @@ import ai.dicewars.common.Agent;
 import ai.dicewars.common.Answer;
 import ai.dicewars.common.Vertex;
 
-
-/*
- * TODO: this agent should display game state in the console
- * and then read move from command line
- */
-
 public class InteractiveAgent implements Agent {
 	
 	private int playerNumber;
-	private List<Vertex> vertices;
-	private ConcreteAnswer answer;
+	private List<? extends Vertex> vertices;
 
 	@Override
 	public Answer makeMove(List<? extends Vertex> vertices) {
-		printmap(vertices);
+		this.vertices = vertices;
+		printMap();
 		System.out.println("Player " + playerNumber + " make move!");
 		Scanner in = new Scanner(System.in);
-		int notUsed = in.nextInt();
-		return new ConcreteAnswer(true, 0, 0);
+		int from = in.nextInt();
 		
-		
+		if (from == 0) {
+			return new ConcreteAnswer(true, 0, 0);
+		}
+		else {
+			int to = in.nextInt();
+			return new ConcreteAnswer(false, from, to);
+		}
 	}
 
 	@Override
@@ -35,14 +34,14 @@ public class InteractiveAgent implements Agent {
 		this.playerNumber = playerNumber;
 	}
 	
-	public void printmap(List<? extends Vertex> vertices)
-	{
-	for(int i=0; i<vertices.size(); i++)
-System.out.println(""+vertices.get(i).getId()+", "+ vertices.get(i).getNeighbours()+", "+vertices.get(i).getNumberOfDices()+" , "+vertices.get(i).getPlayer()+" "); 
-	
+	private void printMap() {
+		for(Vertex vertex : vertices) {
+			System.out.println("ID: " + vertex.getId());
+			System.out.println("Player: " + vertex.getPlayer());
+			System.out.println("Number of dices: " + vertex.getNumberOfDices());
+			System.out.println("Connections: " + vertex.getNeighbours());
+			System.out.println("###########");
+		}
 	}
-
-
-		
-	};
+}
 
