@@ -46,4 +46,8 @@ public class ConcreteVertex implements Vertex {
 		this.player = player;
 	}
 
+	public void addNeighbour(int neighbour) {
+		this.neighbours.add(neighbour);
+	}
+
 }

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import ai.dicewars.common.Vertex;
+
 import java.util.Random;
 
 /*
@@ -22,70 +23,88 @@ public class MapBuilder {
 		 * second = new ConcreteVertex(2, Arrays.asList(1), 6, 1);
 		 * vertices.add(first); vertices.add(second);
 		 */
-
-		List<Integer> numberOfDices = new ArrayList<>();
-		List<Integer> indexesToRemove = new ArrayList<>();
-		List<List<Integer>> listsOfNeighbours = new ArrayList<>();
-		List<List<Integer>> verticesFamily = new ArrayList<>();
 		
-		for(int i=1; i<15; i++){
-			numberOfDices.set(i,1);
-		}
-		
-		int sumOfDicesPlayer1 = 7;
-		int sumOfDicesPlayer2 = 7;
-		Random randomGenerator = new Random();
-
-		while (sumOfDicesPlayer1 < 21) {
-			for (int i = 0; i < 14; i++) {
-				int randomInt = randomGenerator.nextInt(8)+1;
-				if (numberOfDices.get(randomInt) < 8) {
-					numberOfDices.set(randomInt,
-							numberOfDices.get(randomInt) + 1);
-					sumOfDicesPlayer1++;
-				} else {
-					i--;
-				}
-			}
-
-		}
-		
-		while (sumOfDicesPlayer2 < 21) {
-			for (int i = 0; i < 14; i++) {
-				int randomInt = randomGenerator.nextInt(8) + 7;
-				if (numberOfDices.get(randomInt) < 8) {
-					numberOfDices.set(randomInt,
-							numberOfDices.get(randomInt) + 1);
-					sumOfDicesPlayer2++;
-				} else {
-					i--;
-				}
-			}
-
-		}
-		
-		for(int i=1; i<15; i++){
-			indexesToRemove.set(i, i);
-		}
-		int randomInt = randomGenerator.nextInt(14)+1;
-		List<Integer> temp = new ArrayList<>();
-		temp.add(1, randomInt);
-		verticesFamily.add(temp);
-		indexesToRemove.remove(randomInt);
-		while(!indexesToRemove.isEmpty()){
-			int numberOfChildren = randomGenerator.nextInt(5)+1;
-			for(int i=0; i<numberOfChildren; i++){
-				int randomChildren = randomGenerator.nextInt(indexesToRemove.size()-1) + 1;
-				
-			}
-		}
-		
+		//initialize elements
 		for (int i = 0; i < 7; i++) {
-			vertices.add(new ConcreteVertex((i + 1), null, 1, 0));
+			vertices.add(new ConcreteVertex((i + 1), new ArrayList<Integer>(), 1, 0));
 		}
 		for (int i = 7; i < 14; i++) {
-			vertices.add(new ConcreteVertex((i + 1), null, 1, 1));
+			vertices.add(new ConcreteVertex((i + 1), new ArrayList<Integer>(), 1, 1));
 		}
+		
+		vertices.add(new ConcreteVertex(0, null, 0, 0));
+		
+		//set 1 dice for each field
+				for(int i=1; i<15; i++){
+					vertices.get(i).setNumberOfDices(1);
+				}
+				
+		
+	
+		Random randomGenerator = new Random();
+
+		//randomly set nr of dices on a field (player one)
+		for (int i = 0; i < 14; i++) {
+			int randomInt = randomGenerator.nextInt(7)+1;
+			if (vertices.get(randomInt).getNumberOfDices() < 8) {
+				vertices.get(randomInt).setNumberOfDices(vertices.get(randomInt).getNumberOfDices()+1);
+			} else {
+				i--;
+			}
+		}
+		
+		//randomly set nr of dices on a field (player two)
+		for (int i = 0; i < 14; i++) {
+			int randomInt = randomGenerator.nextInt(7)+7;
+			if (vertices.get(randomInt).getNumberOfDices() < 8) {
+				vertices.get(randomInt).setNumberOfDices(vertices.get(randomInt).getNumberOfDices()+1);
+			} else {
+				i--;
+			}
+		}
+
+		
+		//przechowuje indexy, które usuwaj¹ siê gdy liczba zostanie wylosowana
+		List<Integer> indexesToRemove = new ArrayList();
+		//zapamiêtuje kolejnoœæ w drzewie (do iterowania)
+		List<Integer> treeBuilder = new ArrayList<>();
+				
+		
+		for(int i=0; i<14; i++){
+			indexesToRemove.add(i+1);
+		}
+		
+		int randomParent = randomGenerator.nextInt(14)+1;
+		
+		treeBuilder.add(0, randomParent);
+		indexesToRemove = elementRemover(randomParent, indexesToRemove);
+		
+		for(int i = 0; i < treeBuilder.size(); i++){
+			randomParent = treeBuilder.get(i);
+			int quantityOfChildren = randomGenerator.nextInt(5)+1;
+			for(int j=0; j<quantityOfChildren; j++){
+				int randomChildren = randomGenerator.nextInt(indexesToRemove.size());
+				treeBuilder.add(indexesToRemove.get(randomChildren));
+				vertices.get(randomParent).addNeighbour(indexesToRemove.get(randomChildren));
+				indexesToRemove = elementRemover(randomChildren, indexesToRemove);
+				if(indexesToRemove.isEmpty()) break;
+			}
+			
+			if(indexesToRemove.isEmpty()) break;
+		}
+			
+		
 		return vertices;
 	}
+	
+	
+	//removes element from IndexesToRemove and shifts the list
+	List<Integer> elementRemover(int id, List<Integer> IndexesToRemove){
+		for (int i=id; i<IndexesToRemove.size()-1; i++){
+			IndexesToRemove.set(id, IndexesToRemove.get(id+1));
+		}
+		IndexesToRemove.remove(IndexesToRemove.size()-1);
+		return IndexesToRemove;
+	}
+	 
 }
