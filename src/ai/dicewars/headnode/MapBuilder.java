@@ -99,7 +99,6 @@ public class MapBuilder {
 			int randomVertex2 = randomGenerator.nextInt(14) + 1;
 			if (randomVertex1 == randomVertex2) {
 				i--;
-				break;
 			} else {
 				Boolean isConnected = false;
 				for (int j = 0; j < vertices.get(randomVertex1).getNeighbours()
