@@ -14,21 +14,15 @@ import org.graphstream.graph.*;
 import org.graphstream.graph.implementations.*;
 
 public class Game {
-	private static final int MAP_SIZE = 6;
+	private static final int MAP_SIZE = 14;
 	private List<ConcreteVertex> vertices;
 	private Random rand = new Random();
 	private int currentAgent;
+	private Graph graphOfMap;
 
 	public void play() {
-		/*
-		 * TODO: change this to MapBuilder when it starts working again
-		 */
-
 		vertices = new MapBuilder().build();
-		List<List<Integer>> connectionsOfVertices = createConnections(vertices);
-		Graph graphOfMap = new SingleGraph("Dice Wars");
-		createGraph(connectionsOfVertices, vertices, graphOfMap);
-		// drawGraph(connectionsOfVertices, vertices);
+		createGraph();
 		Agent agents[] = new Agent[2];
 		agents[0] = new InteractiveAgent();
 		agents[0].setPlayerNumber(0);
@@ -38,7 +32,7 @@ public class Game {
 		currentAgent = 0;
 
 		while (!isGameFinished()) {
-			redrawGraph(connectionsOfVertices, vertices, graphOfMap);
+			redrawGraph();
 			Answer answer = agents[currentAgent].makeMove(vertices);
 			if (answer.isEmptyMove()) {
 				addRandomDices();
@@ -170,14 +164,14 @@ public class Game {
 					+ to.getId() + " are not connected");
 	}
 
-	public ConcreteVertex getVertex(int vertexId) {
+	private ConcreteVertex getVertex(int vertexId) {
 		for (ConcreteVertex v : vertices)
 			if (v.getId() == vertexId)
 				return v;
 		return null;
 	}
 
-	public List<List<Integer>> createConnections(List<ConcreteVertex> vertices) {
+	private List<List<Integer>> createConnections() {
 
 		List<List<Integer>> connections = new ArrayList<>();
 
@@ -207,55 +201,38 @@ public class Game {
 		return connections;
 	}
 
-	public void createGraph(List<List<Integer>> connections,
-			List<ConcreteVertex> vertices, Graph graph) {
+	private void createGraph() {
+		List<List<Integer>> connections = createConnections();
+		graphOfMap = new SingleGraph("Dice Wars");
 
-		
-		Node n1 = graph.addNode("1");
-		Node n2 = graph.addNode("2");
-		Node n3 = graph.addNode("3");
-		Node n4 = graph.addNode("4");
-		Node n5 = graph.addNode("5");
-		Node n6 = graph.addNode("6");
-		Node n7 = graph.addNode("7");
-		Node n8 = graph.addNode("8");
-		Node n9 = graph.addNode("9");
-		Node n10 = graph.addNode("10");
-		Node n11 = graph.addNode("11");
-		Node n12 = graph.addNode("12");
-		Node n13 = graph.addNode("13");
-		Node n14 = graph.addNode("14");
+		for(int i = 1; i <= MAP_SIZE; i++) {
+			graphOfMap.addNode(Integer.toString(i));
+		}
 
-		n1.setAttribute("ui.label", "Id: 1 Dieces: "+vertices.get(1).getNumberOfDices());
-		n2.setAttribute("ui.label", "Id: 2 Dieces: "+vertices.get(1).getNumberOfDices());
-		n3.setAttribute("ui.label", "Id: 3 Dieces: "+vertices.get(1).getNumberOfDices());
-		n4.setAttribute("ui.label", "Id: 4 Dieces: "+vertices.get(1).getNumberOfDices());
-		n5.setAttribute("ui.label", "Id: 5 Dieces: "+vertices.get(1).getNumberOfDices());
-		n6.setAttribute("ui.label", "Id: 6 Dieces: "+vertices.get(1).getNumberOfDices());
-		n7.setAttribute("ui.label", "Id: 7 Dieces: "+vertices.get(1).getNumberOfDices());
-		n8.setAttribute("ui.label", "Id: 8 Dieces: "+vertices.get(1).getNumberOfDices());
-		n9.setAttribute("ui.label", "Id: 9 Dieces: "+vertices.get(1).getNumberOfDices());
-		n10.setAttribute("ui.label", "Id: 10 Dieces: "+vertices.get(1).getNumberOfDices());
-		n11.setAttribute("ui.label", "Id: 11 Dieces: "+vertices.get(1).getNumberOfDices());
-		n12.setAttribute("ui.label", "Id: 12 Dieces: "+vertices.get(1).getNumberOfDices());
-		n13.setAttribute("ui.label", "Id: 13 Dieces: "+vertices.get(1).getNumberOfDices());
-		n14.setAttribute("ui.label", "Id: 14 Dieces: "+vertices.get(1).getNumberOfDices());
+		updateLabels();
 		
-		graph.addAttribute(
+		graphOfMap.addAttribute(
 				"ui.stylesheet",
-				"node#'1' { shape: box; size: 30px, 30px; fill-color: red; text-size : 20;} node#'2' { shape: box; size: 30px, 30px; fill-color: red; text-size : 20;} node#'3' { shape: box; size: 30px, 30px; fill-color: red; text-size : 20;} node#'4' { shape: box; size: 30px, 30px; fill-color: red; text-size : 20;} node#'5' { shape: box; size: 30px, 30px; fill-color: red; text-size : 20;} node#'6' { shape: box; size: 30px, 30px; fill-color: red; text-size : 20;} node#'7' { shape: box; size: 30px, 30px; fill-color: red; text-size : 20;} node#'8' { shape: box; size: 30px, 30px; text-size : 20;} node#'9' { shape: box; size: 30px, 30px; text-size : 20;} node#'10' { shape: box; size: 30px, 30px; text-size : 20;} node#'11' { shape: box; size: 30px, 30px; text-size : 20;} node#'12' { shape: box; size: 30px, 30px; text-size : 20;} node#'13' { shape: box; size: 30px, 30px; text-size : 20;} node#'14' { shape: box; size: 30px, 30px; text-size : 20;}");
+				"node { shape: box; size: 30px, 30px; text-size : 20; fill-mode: dyn-plain; fill-color: green, red;}");
 
 		for (int i = 0; i < connections.size(); i++) {
-			graph.addEdge(connections.get(i).get(0).toString()
+			graphOfMap.addEdge(connections.get(i).get(0).toString()
 					+ connections.get(i).get(1).toString(), connections.get(i)
 					.get(0).toString(), connections.get(i).get(1).toString());
 		}
 
-		graph.display();
+		graphOfMap.display();
 	}
 
-	public void redrawGraph(List<List<Integer>> connections,
-			List<ConcreteVertex> vertices, Graph graph) {
-		graph.display();
+	private void updateLabels() {
+		for(int i = 0; i < MAP_SIZE; i++) {
+			Node node = graphOfMap.getNode(i);
+			node.setAttribute("ui.label", "Id: " + (i + 1) + " Dices: " + vertices.get(i).getNumberOfDices());
+			node.setAttribute("ui.color", vertices.get(i).getPlayer());
+		}
+	}
+
+	public void redrawGraph() {
+		updateLabels();
 	}
 }
