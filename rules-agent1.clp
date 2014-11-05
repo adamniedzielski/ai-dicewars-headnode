@@ -1,0 +1,1 @@
+;(assert(next-move(from 1)(to 2)(isEmptyMove false)))

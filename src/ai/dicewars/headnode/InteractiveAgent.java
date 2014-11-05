@@ -8,9 +8,9 @@ import ai.dicewars.common.Answer;
 import ai.dicewars.common.Vertex;
 
 public class InteractiveAgent implements Agent {
-	
-	private int playerNumber;
-	private List<? extends Vertex> vertices;
+
+	protected int playerNumber;
+	protected List<? extends Vertex> vertices;
 
 	@Override
 	public Answer makeMove(List<? extends Vertex> vertices) {
@@ -19,11 +19,10 @@ public class InteractiveAgent implements Agent {
 		System.out.println("Player " + playerNumber + " make move!");
 		Scanner in = new Scanner(System.in);
 		int from = in.nextInt();
-		
+
 		if (from == 0) {
 			return new ConcreteAnswer(true, 0, 0);
-		}
-		else {
+		} else {
 			int to = in.nextInt();
 			return new ConcreteAnswer(false, from, to);
 		}
@@ -33,9 +32,9 @@ public class InteractiveAgent implements Agent {
 	public void setPlayerNumber(int playerNumber) {
 		this.playerNumber = playerNumber;
 	}
-	
+
 	private void printMap() {
-		for(Vertex vertex : vertices) {
+		for (Vertex vertex : vertices) {
 			System.out.println("ID: " + vertex.getId());
 			System.out.println("Player: " + vertex.getPlayer());
 			System.out.println("Number of dices: " + vertex.getNumberOfDices());
@@ -44,4 +43,3 @@ public class InteractiveAgent implements Agent {
 		}
 	}
 }
-

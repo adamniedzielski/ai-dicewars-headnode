@@ -26,4 +26,10 @@ b) console
 ..\ai-dicewars-headnote > java -Djava.library.path=./lib -jar myApplication.jar	
 
 
+TODO:
+map topology should be defined as deffacts
+dices number should be facts
+after each move reset and add dices number, map field owners as facts 
+
+
 

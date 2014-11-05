@@ -5,13 +5,15 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.graphstream.graph.implementations.SingleGraph;
+
+import ai.dicewars.clips.ClipsAgent;
 import ai.dicewars.common.Agent;
 import ai.dicewars.common.Answer;
 import ai.dicewars.headnode.exception.MapException;
 import ai.dicewars.headnode.exception.MoveException;
-
-import org.graphstream.graph.*;
-import org.graphstream.graph.implementations.*;
 
 public class Game {
 	private static final int MAP_SIZE = 14;
@@ -21,33 +23,11 @@ public class Game {
 	private Graph graphOfMap;
 
 	public void play() {
-		vertices = new MapBuilder().build();
-		createGraph();
-		Agent agents[] = new Agent[2];
-		agents[0] = new InteractiveAgent();
-		agents[0].setPlayerNumber(0);
-		agents[1] = new InteractiveAgent();
-		agents[1].setPlayerNumber(1);
-
-		currentAgent = 0;
-
-		while (!isGameFinished()) {
-			redrawGraph();
-			Answer answer = agents[currentAgent].makeMove(vertices);
-			if (answer.isEmptyMove()) {
-				addRandomDices();
-				currentAgent = (currentAgent + 1) % 2;
-			} else {
-				try {
-					applyMove(answer);
-				} catch (MoveException e) {
-					e.printStackTrace();
-					return;
-				}
-			}
-		}
-
-		displayWinner();
+		/*
+		 * It would be better to do it on a strategy pattern but I didn't bother
+		 */
+		playInteractive();
+		// playClips();
 	}
 
 	private void displayWinner() {
@@ -205,15 +185,16 @@ public class Game {
 		List<List<Integer>> connections = createConnections();
 		graphOfMap = new SingleGraph("Dice Wars");
 
-		for(int i = 1; i <= MAP_SIZE; i++) {
+		for (int i = 1; i <= MAP_SIZE; i++) {
 			graphOfMap.addNode(Integer.toString(i));
 		}
 
 		updateLabels();
-		
-		graphOfMap.addAttribute(
-				"ui.stylesheet",
-				"node { shape: box; size: 30px, 30px; text-size : 20; fill-mode: dyn-plain; fill-color: green, red;}");
+
+		graphOfMap
+				.addAttribute(
+						"ui.stylesheet",
+						"node { shape: box; size: 30px, 30px; text-size : 20; fill-mode: dyn-plain; fill-color: green, red;}");
 
 		for (int i = 0; i < connections.size(); i++) {
 			graphOfMap.addEdge(connections.get(i).get(0).toString()
@@ -225,9 +206,10 @@ public class Game {
 	}
 
 	private void updateLabels() {
-		for(int i = 0; i < MAP_SIZE; i++) {
+		for (int i = 0; i < MAP_SIZE; i++) {
 			Node node = graphOfMap.getNode(i);
-			node.setAttribute("ui.label", "Id: " + (i + 1) + " Dices: " + vertices.get(i).getNumberOfDices());
+			node.setAttribute("ui.label", "Id: " + (i + 1) + " Dices: "
+					+ vertices.get(i).getNumberOfDices());
 			node.setAttribute("ui.color", vertices.get(i).getPlayer());
 		}
 	}
@@ -235,4 +217,71 @@ public class Game {
 	public void redrawGraph() {
 		updateLabels();
 	}
+
+	public void playClips() {
+		vertices = new MapBuilder().build();
+		createGraph();
+		Agent agents[] = new Agent[2];
+		agents[0] = new ClipsAgent("rules-agent1.clp");
+		agents[0].setPlayerNumber(0);
+		agents[1] = new ClipsAgent("rules-agent2.clp");
+		// agents[1] = new InteractiveAgent();
+		agents[1].setPlayerNumber(1);
+
+		currentAgent = 0;
+
+		while (!isGameFinished()) {
+			redrawGraph();
+			Answer answer = agents[currentAgent].makeMove(vertices);
+			if (answer.isEmptyMove()) {
+				addRandomDices();
+				currentAgent = (currentAgent + 1) % 2;
+			} else {
+				try {
+					applyMove(answer);
+				} catch (MoveException e) {
+					e.printStackTrace();
+					return;
+				}
+			}
+		}
+
+		displayWinner();
+
+		for (Agent a : agents) {
+			if (a instanceof ClipsAgent)
+				((ClipsAgent) a).destroy();
+		}
+	}
+
+	public void playInteractive() {
+		vertices = new MapBuilder().build();
+		createGraph();
+		Agent agents[] = new Agent[2];
+		agents[0] = new InteractiveAgent();
+		agents[0].setPlayerNumber(0);
+		agents[1] = new InteractiveAgent();
+		agents[1].setPlayerNumber(1);
+
+		currentAgent = 0;
+
+		while (!isGameFinished()) {
+			redrawGraph();
+			Answer answer = agents[currentAgent].makeMove(vertices);
+			if (answer.isEmptyMove()) {
+				addRandomDices();
+				currentAgent = (currentAgent + 1) % 2;
+			} else {
+				try {
+					applyMove(answer);
+				} catch (MoveException e) {
+					e.printStackTrace();
+					return;
+				}
+			}
+		}
+
+		displayWinner();
+	}
+
 }
