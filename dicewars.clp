@@ -14,7 +14,14 @@
     (type SYMBOL)
     (allowed-symbols true false)
     (default false)))
-	
+
+(deftemplate next-move
+    (slot from)
+	(slot to)
+    (slot isEmptyMove 
+     (type SYMBOL)
+     (allowed-symbols true false)
+     (default false)))	
 	
 (deftemplate player
    (slot playerNumber)

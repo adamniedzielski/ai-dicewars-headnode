@@ -25,11 +25,15 @@ a) Eclipse
 b) console
 ..\ai-dicewars-headnote > java -Djava.library.path=./lib -jar myApplication.jar	
 
+RULES
 
-TODO:
-map topology should be defined as deffacts
-dices number should be facts
-after each move reset and add dices number, map field owners as facts 
+Provide rules in rules-agent1.clp for your agent and in rules-agent2.clp for the enemy agent.
+The fact defining your player number is given as instance of player deftemplate:
+	(player (playerNumber 1) (who me)) 
+	where 1 stand for your player number.
+	
+As the result of reasoning made by your rules finally there should be a fact of deftemplate next-move present.
+This fact is then retrieved from clips in java as the next move of the actor.
 
 
 
