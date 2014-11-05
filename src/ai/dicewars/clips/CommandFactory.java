@@ -25,10 +25,15 @@ public class CommandFactory {
 	public static String getVertexFact(int id, int numberOfDices, int player) {
 		// TODO substite player with fact of me or enemy
 		return "assert(vertex(id " + id + ") (dices " + numberOfDices
-				+ ") (player " + player + "))";
+				+ ") (playerNumber " + player + "))";
 	}
 
 	public static String getNextMoveFact() {
 		return "(find-all-facts ((?v next-move))(eq 1 1))";
+	}
+
+	public static String getMyPlayerDeffacts(int playerNumber) {
+		return "(deffacts myPlayerNumber(player (playerNumber " + playerNumber
+				+ " )(who me)))";
 	}
 }

@@ -49,6 +49,7 @@ public class ClipsAgent extends InteractiveAgent {
 	public void init() throws ClipsException {
 		clipsFacade = new ClipsFacade();
 		clipsFacade.createMapTopology(this.vertices);
+		clipsFacade.definePlayer(this.playerNumber);
 
 		// This is a file that you provide
 		clipsFacade.loadFile(rulesFileName);

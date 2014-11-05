@@ -97,4 +97,9 @@ public class ClipsFacade {
 		clips.assertString("(next-move(from 1)(to 2)(isEmptyMove false))");
 	}
 
+	public void definePlayer(int playerNumber) {
+		writeTempFile(CommandFactory.getMyPlayerDeffacts(playerNumber));
+		clips.load(TEMP_FILE_NAME);
+	}
+
 }
