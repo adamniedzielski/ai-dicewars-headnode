@@ -1,0 +1,43 @@
+FUNCTION_BLOCK dicewars
+
+VAR_INPUT       
+  you : REAL;
+  enemy : REAL;
+END_VAR
+
+VAR_OUTPUT        
+  success : REAL;
+END_VAR
+
+// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+FUZZIFY you     
+  TERM poor := (0, 1) (3, 0) ; 
+  TERM good := (2, 0) (3, 1) (4, 1) (5, 0);
+  TERM excellent := (4, 0) (9, 1);
+END_FUZZIFY
+
+FUZZIFY enemy      
+  TERM poor := (0, 1) (2, 0) ; 
+  TERM good := (1, 0) (2, 1) (3, 1) (4, 0);
+  TERM excellent := (3, 0) (9, 1);
+END_FUZZIFY
+
+DEFUZZIFY success     
+  TERM low := (0,0) (3,1) (10,0);
+  TERM average := (3,0) (6,1) (9,0);
+  TERM high := (9,0) (12,1) (15,0);
+  METHOD : COG;
+  DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK No1
+  AND : MIN;  // Use 'min' for 'and'
+  ACT : MIN;  // Use 'min' activation method
+  ACCU : MAX; // Use 'max' accumulation method
+
+  RULE 1 : IF you IS poor AND enemy IS excellent THEN success IS low;
+  RULE 2 : IF you IS good OR enemy IS poor THEN success IS average; 
+  RULE 3 : IF you IS excellent THEN success IS high;
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
