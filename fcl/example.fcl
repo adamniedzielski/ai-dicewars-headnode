@@ -1,8 +1,16 @@
 FUNCTION_BLOCK dicewars
 
 VAR_INPUT       
-  you : REAL;
-  enemy : REAL;
+  your_dices : REAL;
+  enemy_dices : REAL;
+  your_total_dices : REAL;
+  enemy_total_dices : REAL;
+  your_total_vertices : REAL;
+  enemy_total_vertices : REAL;
+  your_connections : REAL;
+  enemy_connections : REAL;
+  maximum_enemy_support : REAL;
+  your_maximum_threat : REAL;
 END_VAR
 
 VAR_OUTPUT        
@@ -10,13 +18,13 @@ VAR_OUTPUT
 END_VAR
 
 // Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-FUZZIFY you     
+FUZZIFY your_dices    
   TERM poor := (0, 1) (3, 0) ; 
   TERM good := (2, 0) (3, 1) (4, 1) (5, 0);
   TERM excellent := (4, 0) (9, 1);
 END_FUZZIFY
 
-FUZZIFY enemy      
+FUZZIFY enemy_dices 
   TERM poor := (0, 1) (2, 0) ; 
   TERM good := (1, 0) (2, 1) (3, 1) (4, 0);
   TERM excellent := (3, 0) (9, 1);
@@ -35,9 +43,9 @@ RULEBLOCK No1
   ACT : MIN;  // Use 'min' activation method
   ACCU : MAX; // Use 'max' accumulation method
 
-  RULE 1 : IF you IS poor AND enemy IS excellent THEN success IS low;
-  RULE 2 : IF you IS good OR enemy IS poor THEN success IS average; 
-  RULE 3 : IF you IS excellent THEN success IS high;
+  RULE 1 : IF your_dices IS poor AND enemy_dices IS excellent THEN success IS low;
+  RULE 2 : IF your_dices IS good OR enemy_dices IS poor THEN success IS average; 
+  RULE 3 : IF your_dices IS excellent THEN success IS high;
 END_RULEBLOCK
 
 END_FUNCTION_BLOCK
