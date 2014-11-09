@@ -53,8 +53,10 @@ public class Game {
 		for (int i = 0; i < numberOfExtraDices; i++) {
 			ConcreteVertex selectedVertex = verticesOfCurrentAgent.get(rand
 					.nextInt(verticesOfCurrentAgent.size()));
-			selectedVertex
-					.setNumberOfDices(selectedVertex.getNumberOfDices() + 1);
+			
+			if (selectedVertex.getNumberOfDices() < 8) {
+				selectedVertex.setNumberOfDices(selectedVertex.getNumberOfDices() + 1);
+			}
 		}
 	}
 
