@@ -32,8 +32,7 @@ public class CommandFactory {
 		return "(find-all-facts ((?v next-move))(eq 1 1))";
 	}
 
-	public static String getMyPlayerDeffacts(int playerNumber) {
-		return "(deffacts myPlayerNumber(player (playerNumber " + playerNumber
-				+ " )(who me)))";
+	public static String getMyPlayerDefglobal(int playerNumber) {
+		return "(defglobal ?*myPlayerNumber* = " + playerNumber + ")";
 	}
 }

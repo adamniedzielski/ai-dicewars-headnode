@@ -28,12 +28,11 @@ b) console
 RULES
 
 Provide rules in rules-agent1.clp for your agent and in rules-agent2.clp for the enemy agent.
-The fact defining your player number is given as instance of player deftemplate:
-	(player (playerNumber 1) (who me)) 
-	where 1 stand for your player number.
+The player number of the actor is stored in a *myPlayerNumber* global variable, to access it type:
+	?*myPlayerNumber*
 	
 As the result of reasoning made by your rules finally there should be a fact of deftemplate next-move present.
-This fact is then retrieved from clips in java as the next move of the actor.
+This fact is then retrieved from clips in java as the next move of your actor.
 
 
 

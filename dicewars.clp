@@ -15,25 +15,10 @@
     (allowed-symbols true false)
     (default false)))
 
-(deftemplate next-move
+(deftemplate possible-move
     (slot from)
-	(slot to)
-    (slot isEmptyMove 
-     (type SYMBOL)
-     (allowed-symbols true false)
-     (default false)))	
-	
-(deftemplate player
-   (slot playerNumber)
-   (slot who     
-    (type SYMBOL)
-    (allowed-symbols me enemy)
-    (default enemy)))
-	 
+	(slot to))	
 
 ;NOTES 
 ;(assert (vertex(id 1)(dices 1)(player 1)))
-
 ;(find-all-facts ((?v next-move))(eq 1 1))
-;(deffacts( myPlayerNumber 1))
-;(deffacts myPlayerNumber(player (playerNumber 1)(who me)))

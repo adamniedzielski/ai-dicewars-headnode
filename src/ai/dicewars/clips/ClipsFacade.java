@@ -98,7 +98,7 @@ public class ClipsFacade {
 	}
 
 	public void definePlayer(int playerNumber) {
-		writeTempFile(CommandFactory.getMyPlayerDeffacts(playerNumber));
+		writeTempFile(CommandFactory.getMyPlayerDefglobal(playerNumber));
 		clips.load(TEMP_FILE_NAME);
 	}
 
