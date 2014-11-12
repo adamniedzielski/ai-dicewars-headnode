@@ -33,6 +33,8 @@ The player number of the actor is stored in a *myPlayerNumber* global variable, 
 	
 As the result of reasoning made by your rules finally there should be a fact of deftemplate next-move present.
 This fact is then retrieved from clips in java as the next move of your actor.
+If you want to finish your turn, simply put:
+	(assert( next-move(from 0)(to 0)(isEmptyMove true)))
 
 
 
