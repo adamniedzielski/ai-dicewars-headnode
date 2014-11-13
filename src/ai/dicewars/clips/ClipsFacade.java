@@ -49,7 +49,7 @@ public class ClipsFacade {
 
 			pv = pv.get(0);
 
-			ConcreteAnswer answer = new ConcreteAnswer(Boolean.getBoolean(pv
+			ConcreteAnswer answer = new ConcreteAnswer(Boolean.valueOf(pv
 					.getFactSlot("isEmptyMove").symbolValue()), pv.getFactSlot(
 					"from").intValue(), pv.getFactSlot("to").intValue());
 
