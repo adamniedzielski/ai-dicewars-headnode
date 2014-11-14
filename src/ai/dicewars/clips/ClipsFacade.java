@@ -21,8 +21,6 @@ public class ClipsFacade {
 	public ClipsFacade() {
 		clips = new Environment();
 		loadFile(BASE_RULES_FILE_NAME);
-
-		// PrimitiveValue pv = clips.eval(" (options) ");
 	}
 
 	public void createMapTopology(List<? extends Vertex> vertices) {
@@ -90,11 +88,6 @@ public class ClipsFacade {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-	}
-
-	// TODO REMOVE
-	public void assertShit() {
-		clips.assertString("(next-move(from 1)(to 2)(isEmptyMove false))");
 	}
 
 	public void definePlayer(int playerNumber) {

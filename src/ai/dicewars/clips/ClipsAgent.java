@@ -5,7 +5,6 @@ import java.util.List;
 import ai.dicewars.common.Agent;
 import ai.dicewars.common.Answer;
 import ai.dicewars.common.Vertex;
-import ai.dicewars.headnode.InteractiveAgent;
 import ai.dicewars.headnode.exception.ClipsException;
 
 public class ClipsAgent implements Agent {
@@ -21,8 +20,7 @@ public class ClipsAgent implements Agent {
 	 *            (run) there must be inserted a next-move fact, which indicates
 	 *            the next move to be taken by this agent.
 	 */
-	// TODO pass agent number here and then use it to create fact of me and
-	// enemy
+
 	public ClipsAgent(String filename) {
 		this.rulesFileName = filename;
 	}
