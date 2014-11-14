@@ -22,12 +22,34 @@ public class Game {
 	private int currentAgent;
 	private Graph graphOfMap;
 
-	public void play() {
-		/*
-		 * It would be better to do it on a strategy pattern but I didn't bother
-		 */
-		playInteractive();
-		// playClips();
+	public void play(Agent firstAgent, Agent secondAgent) {
+		vertices = new MapBuilder().build();
+		createGraph();
+		Agent agents[] = new Agent[2];
+		agents[0] = firstAgent;
+		agents[0].setPlayerNumber(0);
+		agents[1] = secondAgent;
+		agents[1].setPlayerNumber(1);
+
+		currentAgent = 0;
+
+		while (!isGameFinished()) {
+			redrawGraph();
+			Answer answer = agents[currentAgent].makeMove(vertices);
+			if (answer.isEmptyMove()) {
+				addRandomDices();
+				currentAgent = (currentAgent + 1) % 2;
+			} else {
+				try {
+					applyMove(answer);
+				} catch (MoveException e) {
+					e.printStackTrace();
+					return;
+				}
+			}
+		}
+
+		displayWinner();
 	}
 
 	private void displayWinner() {
@@ -219,71 +241,4 @@ public class Game {
 	public void redrawGraph() {
 		updateLabels();
 	}
-
-	public void playClips() {
-		vertices = new MapBuilder().build();
-		createGraph();
-		Agent agents[] = new Agent[2];
-		agents[0] = new ClipsAgent("rules-agent1.clp");
-		agents[0].setPlayerNumber(0);
-		agents[1] = new ClipsAgent("rules-agent2.clp");
-		// agents[1] = new InteractiveAgent();
-		agents[1].setPlayerNumber(1);
-
-		currentAgent = 0;
-
-		while (!isGameFinished()) {
-			redrawGraph();
-			Answer answer = agents[currentAgent].makeMove(vertices);
-			if (answer.isEmptyMove()) {
-				addRandomDices();
-				currentAgent = (currentAgent + 1) % 2;
-			} else {
-				try {
-					applyMove(answer);
-				} catch (MoveException e) {
-					e.printStackTrace();
-					return;
-				}
-			}
-		}
-
-		displayWinner();
-
-		for (Agent a : agents) {
-			if (a instanceof ClipsAgent)
-				((ClipsAgent) a).destroy();
-		}
-	}
-
-	public void playInteractive() {
-		vertices = new MapBuilder().build();
-		createGraph();
-		Agent agents[] = new Agent[2];
-		agents[0] = new InteractiveAgent();
-		agents[0].setPlayerNumber(0);
-		agents[1] = new InteractiveAgent();
-		agents[1].setPlayerNumber(1);
-
-		currentAgent = 0;
-
-		while (!isGameFinished()) {
-			redrawGraph();
-			Answer answer = agents[currentAgent].makeMove(vertices);
-			if (answer.isEmptyMove()) {
-				addRandomDices();
-				currentAgent = (currentAgent + 1) % 2;
-			} else {
-				try {
-					applyMove(answer);
-				} catch (MoveException e) {
-					e.printStackTrace();
-					return;
-				}
-			}
-		}
-
-		displayWinner();
-	}
-
 }
