@@ -2,15 +2,18 @@ package ai.dicewars.clips;
 
 import java.util.List;
 
+import ai.dicewars.common.Agent;
 import ai.dicewars.common.Answer;
 import ai.dicewars.common.Vertex;
 import ai.dicewars.headnode.InteractiveAgent;
 import ai.dicewars.headnode.exception.ClipsException;
 
-public class ClipsAgent extends InteractiveAgent {
+public class ClipsAgent implements Agent {
 	private boolean initated = false;
 	private ClipsFacade clipsFacade;
 	private String rulesFileName;
+	private int playerNumber;
+	private List<? extends Vertex> vertices;
 
 	/**
 	 * @param filename
@@ -32,9 +35,6 @@ public class ClipsAgent extends InteractiveAgent {
 				init();
 
 			clipsFacade.reset();
-
-			// TODO REMOVE
-			// clipsFacade.assertShit();
 
 			clipsFacade.transferMapState(this.vertices);
 			clipsFacade.run();
@@ -59,6 +59,11 @@ public class ClipsAgent extends InteractiveAgent {
 
 	public void destroy() {
 		clipsFacade.destroy();
+	}
+
+	@Override
+	public void setPlayerNumber(int playerNumber) {
+		this.playerNumber = playerNumber;
 	}
 
 }
