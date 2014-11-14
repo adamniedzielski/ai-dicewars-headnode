@@ -32,7 +32,7 @@ public class ClipsFacade {
 
 	public void transferMapState(List<? extends Vertex> vertices) {
 		for (Vertex v : vertices) {
-			clips.eval(CommandFactory.getVertexFact(v.getId(),
+			clips.assertString(CommandFactory.getVertexFact(v.getId(),
 					v.getNumberOfDices(), v.getPlayer()));
 		}
 

@@ -24,7 +24,7 @@ public class CommandFactory {
 
 	public static String getVertexFact(int id, int numberOfDices, int player) {
 		// TODO substite player with fact of me or enemy
-		return "assert(vertex(id " + id + ") (dices " + numberOfDices
+		return "(vertex(id " + id + ") (dices " + numberOfDices
 				+ ") (playerNumber " + player + "))";
 	}
 
