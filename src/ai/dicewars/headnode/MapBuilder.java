@@ -12,31 +12,31 @@ import java.util.Random;
 
 public class MapBuilder {
 
-	public List<ConcreteVertex> build() {
+	public List<ConcreteVertex> build(int MapSize, int NrOfConn) {
 		List<ConcreteVertex> vertices = new ArrayList<>();
 
 		vertices.add(new ConcreteVertex(0, null, 0, 0));
 
 		// initialize elements
-		for (int i = 0; i < 7; i++) {
+		for (int i = 0; i < MapSize/2; i++) {
 			vertices.add(new ConcreteVertex((i + 1), new ArrayList<Integer>(),
 					1, 0));
 		}
-		for (int i = 7; i < 14; i++) {
+		for (int i = MapSize/2; i < MapSize; i++) {
 			vertices.add(new ConcreteVertex((i + 1), new ArrayList<Integer>(),
 					1, 1));
 		}
 
 		// set 1 dice for each field
-		for (int i = 1; i < 15; i++) {
+		for (int i = 1; i < MapSize + 1; i++) {
 			vertices.get(i).setNumberOfDices(1);
 		}
 
 		Random randomGenerator = new Random();
 
 		// randomly set nr of dices on a field (player one)
-		for (int i = 0; i < 14; i++) {
-			int randomInt = randomGenerator.nextInt(7) + 1;
+		for (int i = 0; i < MapSize; i++) {
+			int randomInt = randomGenerator.nextInt(MapSize/2) + 1;
 			if (vertices.get(randomInt).getNumberOfDices() < 8) {
 				vertices.get(randomInt).setNumberOfDices(
 						vertices.get(randomInt).getNumberOfDices() + 1);
@@ -46,8 +46,8 @@ public class MapBuilder {
 		}
 
 		// randomly set nr of dices on a field (player two)
-		for (int i = 0; i < 14; i++) {
-			int randomInt = randomGenerator.nextInt(7) + 8;
+		for (int i = 0; i < MapSize; i++) {
+			int randomInt = randomGenerator.nextInt(MapSize/2) + MapSize/2 + 1;
 			if (vertices.get(randomInt).getNumberOfDices() < 8) {
 				vertices.get(randomInt).setNumberOfDices(
 						vertices.get(randomInt).getNumberOfDices() + 1);
@@ -61,11 +61,11 @@ public class MapBuilder {
 		// zapami�tuje kolejno�� w drzewie (do iterowania)
 		List<Integer> treeBuilder = new ArrayList<>();
 
-		for (int i = 0; i < 14; i++) {
+		for (int i = 0; i < MapSize; i++) {
 			indexesToRemove.add(i + 1);
 		}
 
-		int randomParent = randomGenerator.nextInt(14) + 1;
+		int randomParent = randomGenerator.nextInt(MapSize) + 1;
 
 		treeBuilder.add(0, randomParent);
 		indexesToRemove = elementRemover(randomParent - 1, indexesToRemove);
@@ -92,11 +92,11 @@ public class MapBuilder {
 		}
 
 		//Creating additional random connections to create the map, not simple tree
-		int randomConnectionsQuantity = randomGenerator.nextInt(3) + 7;
+		int randomConnectionsQuantity = randomGenerator.nextInt(NrOfConn);
 		//int randomConnectionsQuantity = 9;
 		for (int i = 0; i <= randomConnectionsQuantity; i++) {
-			int randomVertex1 = randomGenerator.nextInt(14) + 1;
-			int randomVertex2 = randomGenerator.nextInt(14) + 1;
+			int randomVertex1 = randomGenerator.nextInt(MapSize) + 1;
+			int randomVertex2 = randomGenerator.nextInt(MapSize) + 1;
 			if (randomVertex1 == randomVertex2) {
 				i--;
 			} else {

@@ -16,14 +16,25 @@ import ai.dicewars.headnode.exception.MapException;
 import ai.dicewars.headnode.exception.MoveException;
 
 public class Game {
-	private static final int MAP_SIZE = 14;
+	private static final int MAP_SIZE = 4;
 	private List<ConcreteVertex> vertices;
+	private List<ConcreteVertex> vertices2ndGame;
 	private Random rand = new Random();
 	private int currentAgent;
 	private Graph graphOfMap;
 
 	public void play(Agent firstAgent, Agent secondAgent) {
-		vertices = new MapBuilder().build();
+		vertices = new MapBuilder().build(MAP_SIZE, 2);
+		vertices2ndGame = new ArrayList<>();
+		for(int i = 0; i < MAP_SIZE; i++){
+			vertices2ndGame.add(new ConcreteVertex(vertices.get(i).getId(), vertices.get(i).getNeighbours(), vertices.get(i).getNumberOfDices(), vertices.get(i).getPlayer()));
+			if(vertices2ndGame.get(i).getPlayer() == 0){
+				vertices2ndGame.get(i).setPlayer(1);
+			}
+			else{
+				vertices2ndGame.get(i).setPlayer(0);
+			}
+		}
 		createGraph();
 		Agent agents[] = new Agent[2];
 		agents[0] = firstAgent;
@@ -48,8 +59,35 @@ public class Game {
 				}
 			}
 		}
-
+		redrawGraph();
 		displayWinner();
+		
+		vertices = vertices2ndGame;
+
+		//2nd game - the same map - opposite situation
+		redrawGraph();
+
+		currentAgent = 0;
+
+		while (!isGameFinished()) {
+			redrawGraph();
+			Answer answer = agents[currentAgent].makeMove(vertices);
+			if (answer.isEmptyMove()) {
+				addRandomDices();
+				currentAgent = (currentAgent + 1) % 2;
+			} else {
+				try {
+					applyMove(answer);
+				} catch (MoveException e) {
+					e.printStackTrace();
+					return;
+				}
+			}
+		}
+		redrawGraph();
+		displayWinner();
+		
+		
 	}
 
 	private void displayWinner() {

@@ -10,7 +10,7 @@ import net.sourceforge.jFuzzyLogic.rule.Variable;
 import ai.dicewars.common.Agent;
 import ai.dicewars.common.Answer;
 import ai.dicewars.common.Vertex;
-import ai.dicewars.sunday.ConcreteAnswer;
+import ai.dicewars.headnode.ConcreteAnswer;
 
 public class FuzzyAgent implements Agent {
 

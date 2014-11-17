@@ -21,8 +21,10 @@ public class Main {
 		 */
 		
 		List<Agent> agents = new ArrayList<>();
-		agents.add(new ClipsAgent("rules-agent1.clp"));
+		//agents.add(new ClipsAgent("rules-agent1.clp"));
+		agents.add(new InteractiveAgent());
 		agents.add(new FuzzyAgent("fcl/example.fcl"));
+		
 		
 		Game game = new Game();
 		game.play(agents.get(0), agents.get(1));
