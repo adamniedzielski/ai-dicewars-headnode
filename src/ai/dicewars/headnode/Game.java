@@ -16,7 +16,7 @@ import ai.dicewars.headnode.exception.MapException;
 import ai.dicewars.headnode.exception.MoveException;
 
 public class Game {
-	private static final int MAP_SIZE = 4;
+	private static final int MAP_SIZE = 14;
 	private List<ConcreteVertex> vertices;
 	private List<ConcreteVertex> vertices2ndGame;
 	private Random rand = new Random();
@@ -28,12 +28,6 @@ public class Game {
 		vertices2ndGame = new ArrayList<>();
 		for(int i = 0; i < MAP_SIZE; i++){
 			vertices2ndGame.add(new ConcreteVertex(vertices.get(i).getId(), vertices.get(i).getNeighbours(), vertices.get(i).getNumberOfDices(), vertices.get(i).getPlayer()));
-			if(vertices2ndGame.get(i).getPlayer() == 0){
-				vertices2ndGame.get(i).setPlayer(1);
-			}
-			else{
-				vertices2ndGame.get(i).setPlayer(0);
-			}
 		}
 		createGraph();
 		Agent agents[] = new Agent[2];
@@ -63,6 +57,10 @@ public class Game {
 		displayWinner();
 		
 		vertices = vertices2ndGame;
+		agents[0] = secondAgent;
+		agents[0].setPlayerNumber(0);
+		agents[1] = firstAgent;
+		agents[1].setPlayerNumber(1);		
 
 		//2nd game - the same map - opposite situation
 		redrawGraph();
