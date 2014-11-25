@@ -1,5 +1,7 @@
 package ai.dicewars.headnode;
 
+import java.io.FileNotFoundException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,12 +23,32 @@ public class Main {
 		 */
 		
 		List<Agent> agents = new ArrayList<>();
+		//agents.add(new InteractiveAgent());
 		//agents.add(new ClipsAgent("rules-agent1.clp"));
-		agents.add(new InteractiveAgent());
+		agents.add(new FuzzyAgent("fcl/example.fcl"));
+		agents.add(new FuzzyAgent("fcl/example.fcl"));
+		agents.add(new FuzzyAgent("fcl/example.fcl"));
 		agents.add(new FuzzyAgent("fcl/example.fcl"));
 		
-		
 		Game game = new Game();
-		game.play(agents.get(0), agents.get(1));
+		
+		for(int i=0; i<agents.size(); i++){
+			for(int j=i+1; j<agents.size(); j++){
+				game.addStatsPlayers(i, j);
+				game.play(agents.get(i), agents.get(j));
+			}
+		}
+		//game.play(agents.get(0), agents.get(1));
+		
+		PrintWriter out;
+		try {
+			out = new PrintWriter("stats.txt");
+			out.print(game.statistics);
+			out.close();
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 }

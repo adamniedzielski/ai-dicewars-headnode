@@ -22,9 +22,10 @@ public class Game {
 	private Random rand = new Random();
 	private int currentAgent;
 	private Graph graphOfMap;
+	public String statistics;
 
 	public void play(Agent firstAgent, Agent secondAgent) {
-		vertices = new MapBuilder().build(MAP_SIZE, 2);
+		vertices = new MapBuilder().build(MAP_SIZE, 7);
 		vertices2ndGame = new ArrayList<>();
 		for(int i = 0; i < MAP_SIZE; i++){
 			vertices2ndGame.add(new ConcreteVertex(vertices.get(i).getId(), vertices.get(i).getNeighbours(), vertices.get(i).getNumberOfDices(), vertices.get(i).getPlayer()));
@@ -56,6 +57,12 @@ public class Game {
 		redrawGraph();
 		displayWinner();
 		
+		if (getPlayerZeroCount() == MAP_SIZE) {
+			addStatsResult(true);
+		} else {
+			addStatsResult(false);
+		}
+		
 		vertices = vertices2ndGame;
 		agents[0] = secondAgent;
 		agents[0].setPlayerNumber(0);
@@ -85,6 +92,11 @@ public class Game {
 		redrawGraph();
 		displayWinner();
 		
+		if (getPlayerZeroCount() == MAP_SIZE) {
+			addStatsResult(false);
+		} else {
+			addStatsResult(true);
+		}
 		
 	}
 
@@ -276,5 +288,16 @@ public class Game {
 
 	public void redrawGraph() {
 		updateLabels();
+	}
+	
+	public void addStatsPlayers(int player0, int player1){
+		statistics = statistics + "\r\n" + player0 + "," + player1;
+	}
+	public void addStatsResult(boolean variant){
+		if(variant == true){
+			statistics = statistics + ",1,0";
+		}else{
+			statistics = statistics + ",0,1";
+		}
 	}
 }
