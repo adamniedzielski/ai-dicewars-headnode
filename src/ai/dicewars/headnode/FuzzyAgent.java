@@ -41,6 +41,8 @@ public class FuzzyAgent implements Agent {
 				enemyTotalVertices++;
 			}
 		}
+		
+		AgentHelper agentHelper = AgentHelper.getInstance();
 
 		for (Vertex vertex : vertices) {
 			if (vertex.getPlayer() == this.playerNumber && vertex.getNumberOfDices() > 1) {
@@ -58,15 +60,21 @@ public class FuzzyAgent implements Agent {
 				        fis.setVariable("maximum_enemy_support", neighbourEnemyWithMaximumDices(neighbour));
 				        fis.setVariable("your_maximum_threat", neighbourEnemyWithMaximumDices(vertex));
 				        fis.setVariable("your_maximum_connected_vertices", 
-				        		AgentHelper.getInsetance().maximumConnectedVertices(vertices, playerNumber));
+				        		agentHelper.maximumConnectedVertices(vertices, playerNumber));
 				        fis.setVariable("enemy_maximum_connected_vertices", 
-				        		AgentHelper.getInsetance().maximumConnectedVertices(vertices, 
-				        				AgentHelper.getInsetance().oppositePlayerNumber(playerNumber)));
+				        		agentHelper.maximumConnectedVertices(vertices, 
+				        				agentHelper.oppositePlayerNumber(playerNumber)));
 				        fis.setVariable("your_maximum_connected_vertices_after_you_winning", 
-				        		AgentHelper.getInsetance().maximumConnectedVerticesAfterWinningField(vertices, vertex, playerNumber));
+				        		agentHelper.maximumConnectedVerticesAfterWinningField(vertices, vertex, playerNumber));
 				        fis.setVariable("enemy_maximum_connected_vertices_after_you_loosing", 
-				        		AgentHelper.getInsetance().maximumConnectedVerticesAfterWinningField(vertices, vertex, 
-				        				AgentHelper.getInsetance().oppositePlayerNumber(playerNumber)));
+				        		agentHelper.maximumConnectedVerticesAfterWinningField(vertices, vertex, 
+				        				agentHelper.oppositePlayerNumber(playerNumber)));
+				        fis.setVariable("your_maximum_connected_vertices_difference_before_after_you_winning", 
+				        		agentHelper.maximumConnectedVerticesAfterWinningField(vertices, vertex, playerNumber) - agentHelper.maximumConnectedVertices(vertices, playerNumber));
+				        fis.setVariable("enemy_maximum_connected_vertices_difference_before_after_you_loosing", 
+				        		agentHelper.maximumConnectedVerticesAfterWinningField(vertices, vertex, 
+				        				agentHelper.oppositePlayerNumber(playerNumber)) -  agentHelper.maximumConnectedVertices(vertices, 
+						        				agentHelper.oppositePlayerNumber(playerNumber)));
 				        fis.evaluate();
 				        Variable success = fis.getVariable("success");						
 						

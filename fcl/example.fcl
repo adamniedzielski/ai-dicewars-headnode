@@ -15,11 +15,15 @@ VAR_INPUT
   enemy_maximum_connected_vertices : REAL;
   your_maximum_connected_vertices_after_you_winning : REAL;
   enemy_maximum_connected_vertices_after_you_loosing : REAL;
+  your_maximum_connected_vertices_difference_before_after_you_winning : REAL;
+  enemy_maximum_connected_vertices_difference_before_after_you_loosing : REAL;
 END_VAR
 
 VAR_OUTPUT        
   success : REAL;
 END_VAR
+
+
 
 // Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
 FUZZIFY your_dices    
