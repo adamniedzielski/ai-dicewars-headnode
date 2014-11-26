@@ -24,6 +24,7 @@ public class Game {
 	private Random rand = new Random();
 	private int currentAgent;
 	private Graph graphOfMap;
+	public String statistics;
 
 	public void play(Agent firstAgent, Agent secondAgent) {
 
@@ -47,6 +48,10 @@ public class Game {
 		
 		
 		gameLoop(agents);
+		agents[0] = secondAgent;
+		agents[0].setPlayerNumber(0);
+		agents[1] = firstAgent;
+		agents[1].setPlayerNumber(1);		
 
 		redrawGraph();
 
@@ -99,6 +104,12 @@ public class Game {
 		}
 		redrawGraph();
 		displayWinner(draw);
+
+		if (getPlayerZeroCount() == MAP_SIZE) {
+			addStatsResult(false);
+		} else {
+			addStatsResult(true);
+		}
 	}
 
 	// public void play() {
@@ -308,6 +319,17 @@ public class Game {
 
 	public void redrawGraph() {
 		updateLabels();
+	}
+	
+	public void addStatsPlayers(int player0, int player1){
+		statistics = statistics + "\r\n" + player0 + "," + player1;
+	}
+	public void addStatsResult(boolean variant){
+		if(variant == true){
+			statistics = statistics + ",1,0";
+		}else{
+			statistics = statistics + ",0,1";
+		}
 	}
 
 	/*
