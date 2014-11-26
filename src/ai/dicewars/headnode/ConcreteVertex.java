@@ -49,5 +49,10 @@ public class ConcreteVertex implements Vertex {
 	public void addNeighbour(int neighbour) {
 		this.neighbours.add(neighbour);
 	}
+	
+	@Override 
+	public String toString(){
+		return "Vetex [ Id : " + getId() + " dices : " + getNumberOfDices() + " playerNumber : " + getPlayer() + " ]";
+	}
 
 }

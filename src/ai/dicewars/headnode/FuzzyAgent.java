@@ -1,8 +1,6 @@
 package ai.dicewars.headnode;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.TreeMap;
 
 import net.sourceforge.jFuzzyLogic.FIS;
@@ -10,7 +8,6 @@ import net.sourceforge.jFuzzyLogic.rule.Variable;
 import ai.dicewars.common.Agent;
 import ai.dicewars.common.Answer;
 import ai.dicewars.common.Vertex;
-import ai.dicewars.headnode.ConcreteAnswer;
 
 public class FuzzyAgent implements Agent {
 
@@ -60,6 +57,16 @@ public class FuzzyAgent implements Agent {
 				        fis.setVariable("enemy_connections", neighbour.getNeighbours().size());
 				        fis.setVariable("maximum_enemy_support", neighbourEnemyWithMaximumDices(neighbour));
 				        fis.setVariable("your_maximum_threat", neighbourEnemyWithMaximumDices(vertex));
+				        fis.setVariable("your_maximum_connected_vertices", 
+				        		AgentHelper.getInsetance().maximumConnectedVertices(vertices, playerNumber));
+				        fis.setVariable("enemy_maximum_connected_vertices", 
+				        		AgentHelper.getInsetance().maximumConnectedVertices(vertices, 
+				        				AgentHelper.getInsetance().oppositePlayerNumber(playerNumber)));
+				        fis.setVariable("your_maximum_connected_vertices_after_you_winning", 
+				        		AgentHelper.getInsetance().maximumConnectedVerticesAfterWinningField(vertices, vertex, playerNumber));
+				        fis.setVariable("enemy_maximum_connected_vertices_after_you_loosing", 
+				        		AgentHelper.getInsetance().maximumConnectedVerticesAfterWinningField(vertices, vertex, 
+				        				AgentHelper.getInsetance().oppositePlayerNumber(playerNumber)));
 				        fis.evaluate();
 				        Variable success = fis.getVariable("success");						
 						

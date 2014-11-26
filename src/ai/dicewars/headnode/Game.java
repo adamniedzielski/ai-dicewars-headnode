@@ -12,87 +12,111 @@ import org.graphstream.graph.implementations.SingleGraph;
 import ai.dicewars.clips.ClipsAgent;
 import ai.dicewars.common.Agent;
 import ai.dicewars.common.Answer;
+import ai.dicewars.common.Vertex;
 import ai.dicewars.headnode.exception.MapException;
 import ai.dicewars.headnode.exception.MoveException;
 
 public class Game {
-	private static final int MAP_SIZE = 4;
+	private static final int MAP_SIZE = 14;
+	private static final int MAXIMUM_SUBSEQUENT_EMPTY_MOVES = 100;
 	private List<ConcreteVertex> vertices;
-	private List<ConcreteVertex> vertices2ndGame;
+	private List<ConcreteVertex> clonedVertices;
 	private Random rand = new Random();
 	private int currentAgent;
 	private Graph graphOfMap;
 
 	public void play(Agent firstAgent, Agent secondAgent) {
+
 		vertices = new MapBuilder().build(MAP_SIZE, 2);
-		vertices2ndGame = new ArrayList<>();
-		for(int i = 0; i < MAP_SIZE; i++){
-			vertices2ndGame.add(new ConcreteVertex(vertices.get(i).getId(), vertices.get(i).getNeighbours(), vertices.get(i).getNumberOfDices(), vertices.get(i).getPlayer()));
-			if(vertices2ndGame.get(i).getPlayer() == 0){
-				vertices2ndGame.get(i).setPlayer(1);
-			}
-			else{
-				vertices2ndGame.get(i).setPlayer(0);
-			}
-		}
+		clonedVertices = cloneVertices(vertices);
+
 		createGraph();
-		Agent agents[] = new Agent[2];
-		agents[0] = firstAgent;
+		
+		Agent agents[] = new Agent[]{firstAgent, secondAgent};
 		agents[0].setPlayerNumber(0);
-		agents[1] = secondAgent;
 		agents[1].setPlayerNumber(1);
 
-		currentAgent = 0;
+		gameLoop(agents);
 
-		while (!isGameFinished()) {
-			redrawGraph();
-			Answer answer = agents[currentAgent].makeMove(vertices);
-			if (answer.isEmptyMove()) {
-				addRandomDices();
-				currentAgent = (currentAgent + 1) % 2;
-			} else {
-				try {
-					applyMove(answer);
-				} catch (MoveException e) {
-					e.printStackTrace();
-					return;
-				}
-			}
-		}
-		redrawGraph();
-		displayWinner();
+		// 2nd game - the same map - opposite situation
+		vertices = clonedVertices;
 		
-		vertices = vertices2ndGame;
-
-		//2nd game - the same map - opposite situation
-		redrawGraph();
-
-		currentAgent = 0;
-
-		while (!isGameFinished()) {
-			redrawGraph();
-			Answer answer = agents[currentAgent].makeMove(vertices);
-			if (answer.isEmptyMove()) {
-				addRandomDices();
-				currentAgent = (currentAgent + 1) % 2;
-			} else {
-				try {
-					applyMove(answer);
-				} catch (MoveException e) {
-					e.printStackTrace();
-					return;
-				}
-			}
-		}
-		redrawGraph();
-		displayWinner();
+		agents = new Agent[]{secondAgent, firstAgent};
+		agents[0].setPlayerNumber(0);
+		agents[1].setPlayerNumber(1);
 		
 		
+		gameLoop(agents);
+
+		redrawGraph();
+
+		destroyAgents(agents);
+
 	}
 
-	private void displayWinner() {
+	private List<ConcreteVertex> cloneVertices(List<ConcreteVertex> vertices) {
+		List<ConcreteVertex> vertices2ndGame = new ArrayList<ConcreteVertex>();
+		for (Vertex v : vertices) {
+			vertices2ndGame.add(new ConcreteVertex(v.getId(),
+					v.getNeighbours(), v.getNumberOfDices(), v.getPlayer()));
+		}
+
+		return vertices2ndGame;
+	}
+
+	private void gameLoop(Agent[] agents) {
+		int subsequent_empty_moves = 0;
+		boolean draw = false;
+		currentAgent = 0;
+
+		while (!isGameFinished()) {
+			try {
+				redrawGraph();
+				Answer answer = agents[currentAgent].makeMove(vertices);
+
+				// if(currentAgent == 0){
+				// AgentHelper.getInsetance().testMe(vertices, answer);
+				// System.out.println("");
+				// }
+				if (answer.isEmptyMove()) {
+					subsequent_empty_moves++;
+					addRandomDices();
+					currentAgent = (currentAgent + 1) % 2;
+				} else {
+
+					applyMove(answer);
+					subsequent_empty_moves = 0;
+				}
+
+				if (subsequent_empty_moves == MAXIMUM_SUBSEQUENT_EMPTY_MOVES) {
+					draw = true;
+					break;
+				}
+			} catch (MoveException e) {
+				e.printStackTrace();
+				return;
+			}
+		}
+		redrawGraph();
+		displayWinner(draw);
+	}
+
+	// public void play() {
+	// /*
+	// * It would be better to do it on a strategy pattern but I didn't bother
+	// */
+	// // playInteractive();
+	// playClips();
+	// }
+
+	private void displayWinner(boolean draw) {
+		if (draw) {
+			System.out.println("Draw after " + MAXIMUM_SUBSEQUENT_EMPTY_MOVES
+					+ " empty movements");
+			return;
+		}
 		if (getPlayerZeroCount() == MAP_SIZE) {
-			System.out.println("Player 0 won");
+
 		} else {
 			System.out.println("Player 1 won");
 		}
@@ -113,9 +137,10 @@ public class Game {
 		for (int i = 0; i < numberOfExtraDices; i++) {
 			ConcreteVertex selectedVertex = verticesOfCurrentAgent.get(rand
 					.nextInt(verticesOfCurrentAgent.size()));
-			
+
 			if (selectedVertex.getNumberOfDices() < 8) {
-				selectedVertex.setNumberOfDices(selectedVertex.getNumberOfDices() + 1);
+				selectedVertex.setNumberOfDices(selectedVertex
+						.getNumberOfDices() + 1);
 			}
 		}
 	}
@@ -149,10 +174,15 @@ public class Game {
 	private boolean isGameFinished() {
 		int countPlayerZero = getPlayerZeroCount();
 
-		if (countPlayerZero == 0 || countPlayerZero == MAP_SIZE)
+		if (countPlayerZero == 0 || countPlayerZero == MAP_SIZE){
+			System.out.println("Finished true :" + countPlayerZero + "/" + MAP_SIZE);
 			return true;
-		else
-			return false;
+		} else {
+			System.out.println("Finished false :" + countPlayerZero + " " + MAP_SIZE);
+				return false;
+
+		}
+		
 	}
 
 	private int getPlayerZeroCount() {
@@ -278,5 +308,16 @@ public class Game {
 
 	public void redrawGraph() {
 		updateLabels();
+	}
+
+	/*
+	 * Clips environment must be destroyed to prevent memory leak through JNI
+	 * allocations
+	 */
+	private void destroyAgents(Agent[] agents) {
+		for (Agent a : agents) {
+			if (a instanceof ClipsAgent)
+				((ClipsAgent) a).destroy();
+		}
 	}
 }
