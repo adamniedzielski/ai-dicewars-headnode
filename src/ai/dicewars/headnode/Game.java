@@ -48,11 +48,6 @@ public class Game {
 		
 		
 		gameLoop(agents);
-		agents[0] = secondAgent;
-		agents[0].setPlayerNumber(0);
-		agents[1] = firstAgent;
-		agents[1].setPlayerNumber(1);		
-
 		redrawGraph();
 
 		destroyAgents(agents);
@@ -79,10 +74,6 @@ public class Game {
 				redrawGraph();
 				Answer answer = agents[currentAgent].makeMove(vertices);
 
-				// if(currentAgent == 0){
-				// AgentHelper.getInsetance().testMe(vertices, answer);
-				// System.out.println("");
-				// }
 				if (answer.isEmptyMove()) {
 					subsequent_empty_moves++;
 					addRandomDices();
@@ -111,14 +102,6 @@ public class Game {
 			addStatsResult(true);
 		}
 	}
-
-	// public void play() {
-	// /*
-	// * It would be better to do it on a strategy pattern but I didn't bother
-	// */
-	// // playInteractive();
-	// playClips();
-	// }
 
 	private void displayWinner(boolean draw) {
 		if (draw) {
