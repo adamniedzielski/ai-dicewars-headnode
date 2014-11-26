@@ -185,15 +185,12 @@ public class Game {
 	private boolean isGameFinished() {
 		int countPlayerZero = getPlayerZeroCount();
 
-		if (countPlayerZero == 0 || countPlayerZero == MAP_SIZE){
-			System.out.println("Finished true :" + countPlayerZero + "/" + MAP_SIZE);
+		if (countPlayerZero == 0 || countPlayerZero == MAP_SIZE) {
 			return true;
 		} else {
-			System.out.println("Finished false :" + countPlayerZero + " " + MAP_SIZE);
-				return false;
-
+			return false;
 		}
-		
+
 	}
 
 	private int getPlayerZeroCount() {
