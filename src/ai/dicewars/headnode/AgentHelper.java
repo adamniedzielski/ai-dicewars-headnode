@@ -13,7 +13,7 @@ public class AgentHelper {
 
 	private static AgentHelper instance;
 
-	public static AgentHelper getInsetance() {
+	public static AgentHelper getInstance() {
 		if (instance == null)
 			instance = new AgentHelper();
 
