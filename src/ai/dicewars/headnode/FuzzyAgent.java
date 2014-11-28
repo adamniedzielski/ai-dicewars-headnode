@@ -9,13 +9,15 @@ import ai.dicewars.common.Agent;
 import ai.dicewars.common.Answer;
 import ai.dicewars.common.Vertex;
 
-public class FuzzyAgent implements Agent {
+public class FuzzyAgent implements Agent, INamedAgent {
 
 	private int playerNumber;
 	private List<? extends Vertex> vertices;
 	private FIS fis;
+	private String filename;
 	
 	public FuzzyAgent(String filename) {
+		this.filename = filename;
 		fis = FIS.load(filename, true);
 	}
 
@@ -108,5 +110,10 @@ public class FuzzyAgent implements Agent {
 			if (v.getId() == vertexId)
 				return v;
 		return null;
+	}
+	
+	@Override
+	public String getAgentUniqueName() {
+		return "FuzzyAgent - " + filename;
 	}
 }

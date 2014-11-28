@@ -13,7 +13,6 @@ import ai.dicewars.clips.ClipsAgent;
 import ai.dicewars.common.Agent;
 import ai.dicewars.common.Answer;
 import ai.dicewars.common.Vertex;
-import ai.dicewars.headnode.exception.MapException;
 import ai.dicewars.headnode.exception.MoveException;
 
 public class Game {
@@ -94,7 +93,7 @@ public class Game {
 			}
 		}
 		redrawGraph();
-		displayWinner(draw);
+		displayWinner(draw, agents);
 
 		if (getPlayerZeroCount() == MAP_SIZE) {
 			addStatsResult(false);
@@ -103,18 +102,26 @@ public class Game {
 		}
 	}
 
-	private void displayWinner(boolean draw) {
+	private void displayWinner(boolean draw, Agent[] agents) {
 		if (draw) {
 			System.out.println("Draw after " + MAXIMUM_SUBSEQUENT_EMPTY_MOVES
 					+ " empty movements");
 			return;
 		}
-		if (getPlayerZeroCount() == MAP_SIZE) {
+		int winnerPlayerNumber = getWinnerPlayerNumber();
+		if (agents[winnerPlayerNumber] instanceof INamedAgent)
+			System.out.println("Won :" + ((INamedAgent) agents[0]).getAgentUniqueName());
+		else
+			System.out.println("Player " + winnerPlayerNumber + " won");
+	}
 
-		} else {
-			System.out.println("Player 1 won");
-		}
-
+	private int getWinnerPlayerNumber(){
+		if (getPlayerZeroCount() == MAP_SIZE) 
+			return 0;
+		else if(getPlayerZeroCount() == 0)
+			return 1;
+		else 
+			return -1;
 	}
 
 	private void addRandomDices() {
@@ -147,7 +154,7 @@ public class Game {
 			ConcreteVertex from = getVertex(answer.getFrom());
 			ConcreteVertex to = getVertex(answer.getTo());
 
-			checkMoveLogic(from, to);
+			GameHelper.getInsetance().checkMoveLogic(from, to, currentAgent);
 
 			int currentAgentScore = getRandomSum(from.getNumberOfDices());
 			int oponentAgentScore = getRandomSum(to.getNumberOfDices());
@@ -169,7 +176,7 @@ public class Game {
 		int countPlayerZero = getPlayerZeroCount();
 
 		if (countPlayerZero == 0 || countPlayerZero == MAP_SIZE) {
-			return true;
+			return true; 
 		} else {
 			return false;
 		}
@@ -197,35 +204,7 @@ public class Game {
 		return sum;
 	}
 
-	private void checkMoveLogic(ConcreteVertex from, ConcreteVertex to)
-			throws MoveException {
-		if (from.getNumberOfDices() == 1)
-			throw new MoveException(
-					"Can not shift dice from field with one dice");
 
-		if (from.getPlayer() != currentAgent) {
-			throw new MoveException(
-					"You wanted to attack from field of your opponent");
-		}
-
-		if (to.getPlayer() == currentAgent) {
-			throw new MoveException("You wanted to attack your own field");
-		}
-
-		try {
-			checkMoveToplogy(from, to);
-		} catch (MapException e) {
-			throw new MoveException(e);
-		}
-	}
-
-	private void checkMoveToplogy(ConcreteVertex from, ConcreteVertex to)
-			throws MapException {
-		if (!(from.getNeighbours().contains(to.getId()) && to.getNeighbours()
-				.contains(from.getId())))
-			throw new MapException("Vertices " + from.getId() + " and "
-					+ to.getId() + " are not connected");
-	}
 
 	private ConcreteVertex getVertex(int vertexId) {
 		for (ConcreteVertex v : vertices)

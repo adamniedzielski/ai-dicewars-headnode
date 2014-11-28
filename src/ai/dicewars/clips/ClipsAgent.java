@@ -5,9 +5,10 @@ import java.util.List;
 import ai.dicewars.common.Agent;
 import ai.dicewars.common.Answer;
 import ai.dicewars.common.Vertex;
+import ai.dicewars.headnode.INamedAgent;
 import ai.dicewars.headnode.exception.ClipsException;
 
-public class ClipsAgent implements Agent {
+public class ClipsAgent implements Agent, INamedAgent {
 	private boolean initated = false;
 	private ClipsFacade clipsFacade;
 	private String rulesFileName;
@@ -62,6 +63,19 @@ public class ClipsAgent implements Agent {
 	@Override
 	public void setPlayerNumber(int playerNumber) {
 		this.playerNumber = playerNumber;
+		
+		if(initated)
+			reinit();
+	}
+
+	private void reinit() {
+		destroy();
+		initated = false;
+	}
+
+	@Override
+	public String getAgentUniqueName() {
+		return "ClipsAgent - " + rulesFileName;
 	}
 
 }
