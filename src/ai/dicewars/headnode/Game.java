@@ -49,8 +49,6 @@ public class Game {
 		gameLoop(agents);
 		redrawGraph();
 
-		destroyAgents(agents);
-
 	}
 
 	private List<ConcreteVertex> cloneVertices(List<ConcreteVertex> vertices) {
@@ -288,17 +286,6 @@ public class Game {
 			statistics = statistics + ",1,0";
 		}else{
 			statistics = statistics + ",0,1";
-		}
-	}
-
-	/*
-	 * Clips environment must be destroyed to prevent memory leak through JNI
-	 * allocations
-	 */
-	private void destroyAgents(Agent[] agents) {
-		for (Agent a : agents) {
-			if (a instanceof ClipsAgent)
-				((ClipsAgent) a).destroy();
 		}
 	}
 }

@@ -9,7 +9,6 @@ import ai.dicewars.headnode.INamedAgent;
 import ai.dicewars.headnode.exception.ClipsException;
 
 public class ClipsAgent implements Agent, INamedAgent {
-	private boolean initated = false;
 	private ClipsFacade clipsFacade;
 	private String rulesFileName;
 	private int playerNumber;
@@ -30,14 +29,19 @@ public class ClipsAgent implements Agent, INamedAgent {
 	public Answer makeMove(List<? extends Vertex> vertices) {
 		this.vertices = vertices;
 		try {
-			if (!initated)
-				init();
-
+			clipsFacade = new ClipsFacade();
+			clipsFacade.createMapTopology(this.vertices);
+			clipsFacade.definePlayer(this.playerNumber);
+			clipsFacade.loadFile(rulesFileName);
+			
 			clipsFacade.reset();
-
 			clipsFacade.transferMapState(this.vertices);
 			clipsFacade.run();
-			return clipsFacade.loadNextMove();
+			Answer answer = clipsFacade.loadNextMove();
+			System.out.println(answer.isEmptyMove());
+			clipsFacade.destroy();
+
+			return answer;
 		} catch (ClipsException e) {
 			e.printStackTrace();
 		}
@@ -45,33 +49,10 @@ public class ClipsAgent implements Agent, INamedAgent {
 		return null;
 	}
 
-	public void init() throws ClipsException {
-		clipsFacade = new ClipsFacade();
-		clipsFacade.createMapTopology(this.vertices);
-		clipsFacade.definePlayer(this.playerNumber);
-
-		// This is a file that you provide
-		clipsFacade.loadFile(rulesFileName);
-
-		initated = true;
-	}
-
-	public void destroy() {
-		clipsFacade.destroy();
-	}
-
 	@Override
 	public void setPlayerNumber(int playerNumber) {
 		this.playerNumber = playerNumber;
-		
-		if(initated)
-			reinit();
-	}
-
-	private void reinit() {
-		destroy();
-		initated = false;
-	}
+    }
 
 	@Override
 	public String getAgentUniqueName() {
