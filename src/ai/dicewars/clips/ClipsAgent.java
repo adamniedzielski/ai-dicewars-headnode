@@ -38,7 +38,7 @@ public class ClipsAgent implements Agent, INamedAgent {
 			clipsFacade.transferMapState(this.vertices);
 			clipsFacade.run();
 			Answer answer = clipsFacade.loadNextMove();
-			System.out.println(answer.isEmptyMove());
+//			System.out.println(answer.isEmptyMove());
 			clipsFacade.destroy();
 
 			return answer;
